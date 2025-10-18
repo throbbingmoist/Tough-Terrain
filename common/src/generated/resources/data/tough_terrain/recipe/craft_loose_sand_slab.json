@@ -1,0 +1,22 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    {
+      "item": "tough_terrain:loose_sand"
+    },
+    {
+      "item": "tough_terrain:loose_sand"
+    },
+    {
+      "item": "tough_terrain:loose_sand"
+    },
+    {
+      "item": "tough_terrain:loose_sand"
+    }
+  ],
+  "result": {
+    "count": 1,
+    "id": "tough_terrain:loose_sand_slab"
+  }
+}

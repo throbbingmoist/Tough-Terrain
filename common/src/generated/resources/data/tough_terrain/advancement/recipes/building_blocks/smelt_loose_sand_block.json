@@ -1,0 +1,32 @@
+{
+  "parent": "minecraft:recipes/root",
+  "criteria": {
+    "any": {
+      "conditions": {
+        "items": [
+          {
+            "items": "tough_terrain:loose_sand"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "has_the_recipe": {
+      "conditions": {
+        "recipe": "tough_terrain:smelt_loose_sand_block"
+      },
+      "trigger": "minecraft:recipe_unlocked"
+    }
+  },
+  "requirements": [
+    [
+      "has_the_recipe",
+      "any"
+    ]
+  ],
+  "rewards": {
+    "recipes": [
+      "tough_terrain:smelt_loose_sand_block"
+    ]
+  }
+}

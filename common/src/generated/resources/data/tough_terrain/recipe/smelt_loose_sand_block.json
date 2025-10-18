@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:smelting",
+  "category": "blocks",
+  "cookingtime": 200,
+  "experience": 0.1,
+  "ingredient": [
+    {
+      "item": "tough_terrain:loose_sand_block"
+    },
+    {
+      "item": "tough_terrain:loose_red_sand_block"
+    }
+  ],
+  "result": {
+    "id": "minecraft:glass"
+  }
+}

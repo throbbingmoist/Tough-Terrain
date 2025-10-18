@@ -1,0 +1,15 @@
+{
+  "block.tough_terrain.loose_dirt": "Loose Dirt",
+  "block.tough_terrain.loose_dirt_block": "Loose Dirt Block",
+  "block.tough_terrain.loose_dirt_slab": "Loose Dirt Slab",
+  "block.tough_terrain.loose_gravel": "Loose Gravel",
+  "block.tough_terrain.loose_gravel_block": "Loose Gravel Block",
+  "block.tough_terrain.loose_gravel_slab": "Loose Gravel Slab",
+  "block.tough_terrain.loose_red_sand": "Loose Red Sand",
+  "block.tough_terrain.loose_red_sand_block": "Loose Red Sand Block",
+  "block.tough_terrain.loose_red_sand_slab": "Loose Red Sand Slab",
+  "block.tough_terrain.loose_sand": "Loose Sand",
+  "block.tough_terrain.loose_sand_block": "Loose Sand Block",
+  "block.tough_terrain.loose_sand_slab": "Loose Sand Slab",
+  "category.tough_terrain": "Tough Terrain"
+}
