@@ -1,0 +1,15 @@
+{
+  "required": true,
+  "package": "net.moist.mixin",
+  "compatibilityLevel": "JAVA_21",
+  "minVersion": "0.8",
+  "client": [
+  ],
+  "mixins": [
+    "FallingBlockEntityMixin",
+    "SpreadingSnowyDirtBlockMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}

@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    {
+      "item": "tough_terrain:loose_dirt_slab"
+    },
+    {
+      "item": "tough_terrain:loose_dirt_slab"
+    }
+  ],
+  "result": {
+    "count": 1,
+    "id": "tough_terrain:loose_dirt_block"
+  }
+}
