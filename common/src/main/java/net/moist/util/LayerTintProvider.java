@@ -21,6 +21,4 @@ public class LayerTintProvider implements BlockColor {
 		}
 		return -1;
 	}
-
-
 }

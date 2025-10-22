@@ -1,4 +1,7 @@
 {
+  "block.tough_terrain.grass_layer": "Grass Layer",
+  "block.tough_terrain.grass_layer_block": "Grass Layer Block",
+  "block.tough_terrain.grass_layer_slab": "Grass Layer Slab",
   "block.tough_terrain.loose_dirt": "Loose Dirt",
   "block.tough_terrain.loose_dirt_block": "Loose Dirt Block",
   "block.tough_terrain.loose_dirt_slab": "Loose Dirt Slab",
@@ -11,5 +14,8 @@
   "block.tough_terrain.loose_sand": "Loose Sand",
   "block.tough_terrain.loose_sand_block": "Loose Sand Block",
   "block.tough_terrain.loose_sand_slab": "Loose Sand Slab",
+  "block.tough_terrain.mycelium_layer": "Mycelium Layer",
+  "block.tough_terrain.mycelium_layer_block": "Mycelium Layer Block",
+  "block.tough_terrain.mycelium_layer_slab": "Mycelium Layer Slab",
   "category.tough_terrain": "Tough Terrain"
 }

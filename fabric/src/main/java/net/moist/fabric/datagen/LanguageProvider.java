@@ -22,11 +22,14 @@ public class LanguageProvider extends FabricLanguageProvider {
 		translateLayers(translationBuilder,ModBlocks.LOOSE_RED_SAND, "Loose Red Sand");
 		translateLayers(translationBuilder,ModBlocks.LOOSE_GRAVEL, "Loose Gravel");
 
+		translateLayers(translationBuilder,ModBlocks.GRASS_LAYER, "Grass Layer");
+		translateLayers(translationBuilder,ModBlocks.MYCELIUM_LAYER, "Mycelium Layer");
+
 		translationBuilder.add(ModCreativeTabs.TOUGH_TERRAIN_TAB.getKey(), "Tough Terrain");
 	}
 
 	public void translateLayers(TranslationBuilder translationBuilder, RegistrySupplier<Block> block, String blockName) {
-		translationBuilder.add(block.get().asItem(), blockName);
+		translationBuilder.add(block.get().asItem().getDescriptionId(), blockName);
 		translationBuilder.add(block.get().asItem().getDescriptionId(block.get().asItem().getDefaultInstance())+"_block", blockName+" Block");
 		translationBuilder.add(block.get().asItem().getDescriptionId(block.get().asItem().getDefaultInstance())+"_slab", blockName+" Slab");
 

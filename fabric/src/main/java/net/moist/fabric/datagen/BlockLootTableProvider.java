@@ -1,5 +1,6 @@
 package net.moist.fabric.datagen;
 
+import dev.architectury.platform.Mod;
 import dev.architectury.registry.registries.RegistrySupplier;
 import net.fabricmc.fabric.api.datagen.v1.FabricDataOutput;
 import net.fabricmc.fabric.api.datagen.v1.provider.FabricBlockLootTableProvider;
@@ -56,37 +57,37 @@ public class BlockLootTableProvider extends FabricBlockLootTableProvider {
 		createLayerDropTable(Blocks.GRAVEL, ModBlocks.LOOSE_GRAVEL.get(), 8);
 
 		createLayerTables(LayerBlock.LAYERS, ModBlocks.LOOSE_DIRT, ModBlocks.LOOSE_SAND, ModBlocks.LOOSE_RED_SAND, ModBlocks.LOOSE_GRAVEL);
-
+		createGrassLayerTables(LayerBlock.LAYERS, ModBlocks.GRASS_LAYER, ModBlocks.MYCELIUM_LAYER);
 		//createLayerTable(ModBlocks.LOOSE_RED_CONCRETE_POWDER, LayerBlock.LAYERS);
-	}
-
-	public final void createLayerTables(IntegerProperty LayerProperty, Block... block) {
-		for (Block holder : block) {
-			createLayerTable(LayerProperty, holder);
-		}
 	}
 	@SafeVarargs
 	public final void createLayerTables(IntegerProperty LayerProperty, RegistrySupplier<Block>... block) {
 		for (RegistrySupplier<Block> holder : block) {
-			createLayerTable(LayerProperty, holder.get());
+			createLayerTable(LayerProperty, holder, holder.get());
+		}
+	}
+	@SafeVarargs
+	public final void createGrassLayerTables(IntegerProperty LayerProperty, RegistrySupplier<Block>... block) {
+		for (RegistrySupplier<Block> holder : block) {
+			createLayerTable(LayerProperty, holder, ModBlocks.LOOSE_DIRT.get());
 		}
 	}
 	public void createLayerTable(IntegerProperty LayerProperty, RegistrySupplier<Block> block) {
-		createLayerTable(LayerProperty, block.get());
+		createLayerTable(LayerProperty, block, block.get());
 	}
-	public void createLayerTable(IntegerProperty LayerProperty, Block block) {
+	public void createLayerTable(IntegerProperty LayerProperty, RegistrySupplier<Block> block, ItemLike ToDrop) {
 		LootTable.Builder builder = LootTable.lootTable();
 		for (Integer layers : LayerProperty.getPossibleValues()) {
 			builder.withPool(LootPool.lootPool()
 				.setRolls(ConstantValue.exactly(1.0F))
-				.add(LootItem.lootTableItem(block)
+				.add(LootItem.lootTableItem(ToDrop)
 					.apply(SetItemCountFunction.setCount(ConstantValue.exactly(layers)))
-					.when(LootItemBlockStatePropertyCondition.hasBlockStateProperties(block)
+					.when(LootItemBlockStatePropertyCondition.hasBlockStateProperties(block.get())
 						.setProperties(StatePropertiesPredicate.Builder.properties().hasProperty(LayerProperty, layers)))
 				)
 			);
 		}
-		add(block, builder);
+		add(block.get(), builder);
 	}
 	public void createLayerDropTable(Block block, Block layerBlock, int layersToDrop) {
 

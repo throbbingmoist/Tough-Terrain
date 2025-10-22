@@ -9,6 +9,7 @@ import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.block.*;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.lighting.LightEngine;
+import net.moist.block.ModBlocks;
 import net.moist.block.content.LayerBlock;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -55,10 +56,28 @@ public abstract class SpreadingSnowyDirtBlockMixin extends SnowyDirtBlock {
 
 				for(int i = 0; i < 4; ++i) {
 					BlockPos blockPos2 = blockPos.offset(randomSource.nextInt(3) - 1, randomSource.nextInt(5) - 3, randomSource.nextInt(3) - 1);
-					if (serverLevel.getBlockState(blockPos2).getBlock() instanceof LayerBlock && ((LayerBlock) serverLevel.getBlockState(blockPos2).getBlock()).isOvergrowable() && serverLevel.getBlockState(blockPos2).hasProperty(LayerBlock.LAYERS) && serverLevel.getBlockState(blockPos2).getValue(LayerBlock.LAYERS) == LayerBlock.MAX_LAYERS && canPropagate(blockState2, serverLevel, blockPos2)) {
-						serverLevel.setBlockAndUpdate(blockPos2, (BlockState)blockState2.setValue(SNOWY, serverLevel.getBlockState(blockPos2.above()).is(Blocks.SNOW)));
-						ci.cancel();
+					if (serverLevel.getBlockState(blockPos2).getBlock() instanceof LayerBlock  && ((LayerBlock) serverLevel.getBlockState(blockPos2).getBlock()).isOvergrowable() && canPropagate(blockState2, serverLevel, blockPos2)) {
+						if (serverLevel.getBlockState(blockPos2).getValue(LayerBlock.LAYERS) == LayerBlock.MAX_LAYERS) {
+							serverLevel.setBlockAndUpdate(blockPos2, (BlockState)blockState2.setValue(SNOWY, serverLevel.getBlockState(blockPos2.above()).is(Blocks.SNOW)));
+							ci.cancel();
+						} else if (serverLevel.getBlockState(blockPos2).getValue(LayerBlock.LAYERS) != LayerBlock.MAX_LAYERS) {
+							if (blockState2.getBlock().equals(Blocks.GRASS_BLOCK)) {
+								serverLevel.setBlockAndUpdate(blockPos2, ModBlocks.GRASS_LAYER.get().defaultBlockState().setValue(LayerBlock.LAYERS, serverLevel.getBlockState(blockPos2).getValue(LayerBlock.LAYERS)));
+							}
+							if (blockState2.getBlock().equals(Blocks.MYCELIUM)) {
+								serverLevel.setBlockAndUpdate(blockPos2, ModBlocks.MYCELIUM_LAYER.get().defaultBlockState().setValue(LayerBlock.LAYERS, serverLevel.getBlockState(blockPos2).getValue(LayerBlock.LAYERS)));
+							}
+							ci.cancel();
+						}
 					}
+//					if (serverLevel.getBlockState(blockPos2).getBlock() instanceof LayerBlock && ((LayerBlock) serverLevel.getBlockState(blockPos2).getBlock()).isOvergrowable() &&
+//						serverLevel.getBlockState(blockPos2).hasProperty(LayerBlock.LAYERS) && serverLevel.getBlockState(blockPos2).getValue(LayerBlock.LAYERS) == LayerBlock.MAX_LAYERS &&
+//						canPropagate(blockState2, serverLevel, blockPos2)) {
+//						serverLevel.setBlockAndUpdate(blockPos2, (BlockState)blockState2.setValue(SNOWY, serverLevel.getBlockState(blockPos2.above()).is(Blocks.SNOW)));
+//						ci.cancel();
+//					}
+
+
 				}
 			}
 

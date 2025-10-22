@@ -1,5 +1,8 @@
 {
   "values": [
-    "tough_terrain:loose_sand_block"
+    {
+      "id": "tough_terrain:loose_sand_block",
+      "required": false
+    }
   ]
 }

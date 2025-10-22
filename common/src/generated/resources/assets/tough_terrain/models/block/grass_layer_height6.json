@@ -1,0 +1,124 @@
+{
+  "parent": "block/block",
+  "elements": [
+    {
+      "faces": {
+        "down": {
+          "texture": "#bottom"
+        },
+        "east": {
+          "texture": "#side",
+          "uv": [
+            0,
+            0,
+            16,
+            12
+          ]
+        },
+        "north": {
+          "texture": "#side",
+          "uv": [
+            0,
+            0,
+            16,
+            12
+          ]
+        },
+        "south": {
+          "texture": "#side",
+          "uv": [
+            0,
+            0,
+            16,
+            12
+          ]
+        },
+        "up": {
+          "texture": "#top",
+          "tintindex": 0
+        },
+        "west": {
+          "texture": "#side",
+          "uv": [
+            0,
+            0,
+            16,
+            12
+          ]
+        }
+      },
+      "from": [
+        0,
+        0,
+        0
+      ],
+      "to": [
+        16,
+        12,
+        16
+      ]
+    },
+    {
+      "faces": {
+        "east": {
+          "texture": "#overlay",
+          "tintindex": 0,
+          "uv": [
+            0,
+            0,
+            16,
+            12
+          ]
+        },
+        "north": {
+          "texture": "#overlay",
+          "tintindex": 0,
+          "uv": [
+            0,
+            0,
+            16,
+            12
+          ]
+        },
+        "south": {
+          "texture": "#overlay",
+          "tintindex": 0,
+          "uv": [
+            0,
+            0,
+            16,
+            12
+          ]
+        },
+        "west": {
+          "texture": "#overlay",
+          "tintindex": 0,
+          "uv": [
+            0,
+            0,
+            16,
+            12
+          ]
+        }
+      },
+      "from": [
+        0,
+        0,
+        0
+      ],
+      "to": [
+        16,
+        12,
+        16
+      ]
+    }
+  ],
+  "render_type": "minecraft:cutout",
+  "textures": {
+    "bottom": "minecraft:block/dirt",
+    "overlay": "minecraft:block/grass_block_side_overlay",
+    "particle": "minecraft:block/dirt",
+    "side": "minecraft:block/grass_block_side",
+    "top": "minecraft:block/grass_block_top"
+  }
+}
