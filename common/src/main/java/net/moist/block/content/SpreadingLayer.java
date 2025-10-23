@@ -2,20 +2,12 @@ package net.moist.block.content;
 
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
-import dev.architectury.registry.registries.RegistrySupplier;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.Direction;
-import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraft.tags.FluidTags;
 import net.minecraft.util.RandomSource;
-import net.minecraft.world.entity.item.FallingBlockEntity;
-import net.minecraft.world.item.CreativeModeTab;
-import net.minecraft.world.item.Item;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.block.*;
 import net.minecraft.world.level.block.state.BlockBehaviour;
@@ -31,11 +23,22 @@ import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import org.jetbrains.annotations.NotNull;
 
-public class LayerBlockNoFall extends Block implements SimpleWaterloggedBlock {
-	public static final IntegerProperty LAYERS = LayerBlock.LAYERS;
+public class SpreadingLayer extends SpreadingSnowyDirtBlock implements SimpleWaterloggedBlock {
+	public static final IntegerProperty LAYERS = FallingLayer.LAYERS;
 	public static final int MAX_LAYERS = 8;
-	//public static final BooleanProperty SNOWY = BlockStateProperties.SNOWY;
+	public static final BooleanProperty SNOWY = BlockStateProperties.SNOWY;
 
+
+	public static final MapCodec<SpreadingLayer> CODEC = RecordCodecBuilder.mapCodec(instance ->
+		instance.group(
+			propertiesCodec()
+		).apply(instance, SpreadingLayer::new
+		));
+	private final boolean overgrowable;
+
+	protected @NotNull MapCodec<? extends SpreadingSnowyDirtBlock> codec() {
+		return CODEC;
+	}
 
 	protected static final VoxelShape[] SHAPE_BY_LAYER = new VoxelShape[]{
 		Shapes.empty(),
@@ -50,11 +53,16 @@ public class LayerBlockNoFall extends Block implements SimpleWaterloggedBlock {
 	};
 
 
-	public LayerBlockNoFall(BlockBehaviour.Properties properties) {
+	public SpreadingLayer(BlockBehaviour.Properties properties) {
+		this(properties, false);
+	}
+
+	public SpreadingLayer(BlockBehaviour.Properties properties, boolean overgrowable) {
 		super(properties.randomTicks());
+		this.overgrowable = overgrowable;
 		this.registerDefaultState(this.stateDefinition.any().setValue(LAYERS, 1)
 			.setValue(BlockStateProperties.WATERLOGGED, false)
-			//.setValue(BlockStateProperties.SNOWY, false)
+			.setValue(BlockStateProperties.SNOWY, false)
 		);
 	}
 
@@ -65,7 +73,7 @@ public class LayerBlockNoFall extends Block implements SimpleWaterloggedBlock {
 	@Override
 	protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
 		builder.add(BlockStateProperties.WATERLOGGED).add(LAYERS);
-			//.add(SNOWY);
+		builder.add(SNOWY);
 	}
 
 	@Override
@@ -87,7 +95,7 @@ public class LayerBlockNoFall extends Block implements SimpleWaterloggedBlock {
 		BlockState existingState = level.getBlockState(pos);
 
 
-		if (existingState.getBlock() instanceof LayerBlockNoFall) {
+		if (existingState.getBlock() instanceof SpreadingLayer) {
 			int currentLayers = existingState.getValue(LAYERS);
 			if (currentLayers < MAX_LAYERS) {
 				return existingState.setValue(LAYERS, currentLayers + 1);
@@ -110,6 +118,10 @@ public class LayerBlockNoFall extends Block implements SimpleWaterloggedBlock {
 	}
 
 
+	public boolean isOvergrowable() {
+		return this.overgrowable;
+	}
+
 	@Override
 	protected void randomTick(BlockState state, ServerLevel level, BlockPos pos, RandomSource randomSource) {
 		super.randomTick(state, level, pos, randomSource);
@@ -118,6 +130,9 @@ public class LayerBlockNoFall extends Block implements SimpleWaterloggedBlock {
 	@Override
 	public void tick(BlockState state, ServerLevel level, BlockPos pos, RandomSource random) {
 		if (!level.isClientSide) {
+			if (state.getValue(BlockStateProperties.WATERLOGGED) && !(state.getValue(BlockStateProperties.LAYERS) < 8)) {
+				state.setValue(BlockStateProperties.WATERLOGGED, false);
+			}
 			super.tick(state, level, pos, random);
 		}
 	}

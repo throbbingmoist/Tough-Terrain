@@ -35,10 +35,12 @@ public class ModItems {
 	}
 
 	public static RegistrySupplier<Item> registerTintedGrassLayerItemVariants(String id, RegistrySupplier<Block> layer, RegistrySupplier<CreativeModeTab> tab) {
-		ColorHandlerRegistry.registerItemColors(ColorHandler.GRASS_ITEM_TINT_PROVIDER, ITEMS.register(Terrain.getID(""+id+"_block"), () -> new LayerItemNoFall(layer.get(), new Item.Properties().arch$tab(tab), 8, "_block")));
-		ColorHandlerRegistry.registerItemColors(ColorHandler.GRASS_ITEM_TINT_PROVIDER, ITEMS.register(Terrain.getID(""+id+"_slab"), () -> new LayerItemNoFall(layer.get(), new Item.Properties().arch$tab(tab), 4, "_slab")));
-		RegistrySupplier<Item> registered = ITEMS.register(Terrain.getID("" + id), () -> new LayerItemNoFall(layer.get(), new Item.Properties().arch$tab(tab), 1));
-		ColorHandlerRegistry.registerItemColors(ColorHandler.GRASS_ITEM_TINT_PROVIDER, registered);
+		RegistrySupplier<Item> registeredBlock = ITEMS.register(Terrain.getID(id+"_block"), () -> new LayerItemNoFall(layer.get(), new Item.Properties().arch$tab(tab), 8, "_block"));
+		ColorHandlerRegistry.registerItemColors(ColorHandler.GRASS_ITEM_TINT_PROVIDER, () -> registeredBlock.get());
+		RegistrySupplier<Item> registeredSlab = ITEMS.register(Terrain.getID(id+"_slab"), () -> new LayerItemNoFall(layer.get(), new Item.Properties().arch$tab(tab), 4, "_slab"));
+		ColorHandlerRegistry.registerItemColors(ColorHandler.GRASS_ITEM_TINT_PROVIDER, () -> registeredSlab.get());
+		RegistrySupplier<Item> registered = ITEMS.register(Terrain.getID(id), () -> new LayerItemNoFall(layer.get(), new Item.Properties().arch$tab(tab), 1));
+		ColorHandlerRegistry.registerItemColors(ColorHandler.GRASS_ITEM_TINT_PROVIDER, () ->  registered.get());
 
 		return registered;
 	}

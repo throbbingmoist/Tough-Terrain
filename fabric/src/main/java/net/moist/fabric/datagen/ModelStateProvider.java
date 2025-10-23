@@ -4,7 +4,6 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import net.fabricmc.fabric.api.datagen.v1.FabricDataOutput;
 import net.fabricmc.fabric.api.datagen.v1.provider.FabricModelProvider;
-import net.minecraft.core.registries.Registries;
 import net.minecraft.data.models.BlockModelGenerators;
 import net.minecraft.data.models.ItemModelGenerators;
 import net.minecraft.data.models.blockstates.*;
@@ -14,7 +13,7 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.moist.Terrain;
 import net.moist.block.ModBlocks;
-import net.moist.block.content.LayerBlock;
+import net.moist.block.content.FallingLayer;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -261,7 +260,7 @@ public class ModelStateProvider extends FabricModelProvider {
 	}
 
 	private static void generateLayeredBlockstates(BlockModelGenerators blockModelGenerators, Block layeredBlock, String blockName) {
-		blockModelGenerators.blockStateOutput.accept( MultiVariantGenerator.multiVariant(layeredBlock).with(PropertyDispatch.property(LayerBlock.LAYERS).generate((integer) -> {
+		blockModelGenerators.blockStateOutput.accept( MultiVariantGenerator.multiVariant(layeredBlock).with(PropertyDispatch.property(FallingLayer.LAYERS).generate((integer) -> {
 			ResourceLocation modelLocation;
 			if (integer > 8) {modelLocation = ResourceLocation.fromNamespaceAndPath(Terrain.MOD_ID, "block/" + blockName);}
 			else {modelLocation = ResourceLocation.fromNamespaceAndPath(Terrain.MOD_ID, "block/" + blockName + "_height" + integer);}

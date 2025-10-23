@@ -14,7 +14,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.material.Fluids;
 import net.moist.Terrain;
-import net.moist.block.content.LayerBlock;
+import net.moist.block.content.FallingLayer;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -42,21 +42,21 @@ public class LayerItem extends BlockItem {
 
 		Terrain.LOGGER.debug(context.getItemInHand().getItem().toString());
 		BlockState existingState = level.getBlockState(pos);
-			if (existingState.getBlock() instanceof LayerBlock && existingState.getBlock() == this.getBlock()) {
-				int currentLayers = existingState.getValue(LayerBlock.LAYERS);
-				if (currentLayers < LayerBlock.MAX_LAYERS) {
+			if (existingState.getBlock() instanceof FallingLayer && existingState.getBlock() == this.getBlock()) {
+				int currentLayers = existingState.getValue(FallingLayer.LAYERS);
+				if (currentLayers < FallingLayer.MAX_LAYERS) {
 					if (!level.isClientSide) {
 						int layers = currentLayers + this.getLayerAmount();
-						if (layers > LayerBlock.MAX_LAYERS) {
+						if (layers > FallingLayer.MAX_LAYERS) {
 							if (level.getBlockState(pos.above()).canBeReplaced()) {
-								level.setBlock(pos, existingState.setValue(LayerBlock.LAYERS, LayerBlock.MAX_LAYERS).setValue(BlockStateProperties.WATERLOGGED,level.getFluidState(pos).is(Fluids.WATER)), 11);
-								level.setBlock(pos.above(), existingState.setValue(LayerBlock.LAYERS, layers - LayerBlock.MAX_LAYERS).setValue(BlockStateProperties.WATERLOGGED,level.getFluidState(pos.above()).is(Fluids.WATER)), 11);
+								level.setBlock(pos, existingState.setValue(FallingLayer.LAYERS, FallingLayer.MAX_LAYERS).setValue(BlockStateProperties.WATERLOGGED,level.getFluidState(pos).is(Fluids.WATER)), 11);
+								level.setBlock(pos.above(), existingState.setValue(FallingLayer.LAYERS, layers - FallingLayer.MAX_LAYERS).setValue(BlockStateProperties.WATERLOGGED,level.getFluidState(pos.above()).is(Fluids.WATER)), 11);
 
 							} else {
 								return InteractionResult.FAIL;
 							}
 						} else {
-							level.setBlock(pos, existingState.setValue(LayerBlock.LAYERS, layers).setValue(BlockStateProperties.WATERLOGGED,level.getFluidState(pos).is(Fluids.WATER)), 11);
+							level.setBlock(pos, existingState.setValue(FallingLayer.LAYERS, layers).setValue(BlockStateProperties.WATERLOGGED,level.getFluidState(pos).is(Fluids.WATER)), 11);
 						}
 						level.playSound(null, pos, existingState.getSoundType().getPlaceSound(), SoundSource.BLOCKS, 1.0F, 0.8F + level.random.nextFloat() * 0.4F);
 						if ((context.getPlayer() != null) && (!context.getPlayer().isCreative())) {
@@ -80,7 +80,7 @@ public class LayerItem extends BlockItem {
 
 		if (placementState.canBeReplaced(blockPlaceContext)) {
 			int layers = this.getLayerAmount();
-			BlockState newState = this.getBlock().defaultBlockState().setValue(LayerBlock.LAYERS, Math.min(layers, LayerBlock.MAX_LAYERS)).setValue(BlockStateProperties.WATERLOGGED,level.getFluidState(placementPos).is(Fluids.WATER));
+			BlockState newState = this.getBlock().defaultBlockState().setValue(FallingLayer.LAYERS, Math.min(layers, FallingLayer.MAX_LAYERS)).setValue(BlockStateProperties.WATERLOGGED,level.getFluidState(placementPos).is(Fluids.WATER));
 
 			if (!level.isClientSide) {
 				level.setBlock(placementPos, newState, 11);

@@ -10,9 +10,11 @@ import net.minecraft.world.level.block.*;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.lighting.LightEngine;
 import net.moist.block.ModBlocks;
-import net.moist.block.content.LayerBlock;
+import net.moist.block.content.FallingLayer;
+import net.moist.block.content.SpreadingLayer;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
@@ -20,6 +22,8 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(SpreadingSnowyDirtBlock.class)
 public abstract class SpreadingSnowyDirtBlockMixin extends SnowyDirtBlock {
+	private int FORSIZE = 4; // remember to set to 4
+
 
 	@Shadow private static boolean canBeGrass(BlockState blockState, LevelReader levelReader, BlockPos blockPos) {
 		BlockPos blockPos2 = blockPos.above();
@@ -28,7 +32,23 @@ public abstract class SpreadingSnowyDirtBlockMixin extends SnowyDirtBlock {
 			return true;
 		} else if (blockState2.getFluidState().getAmount() == 8) {
 			return false;
-		} else if (!(blockState2.getBlock() instanceof LayerBlock)) {
+		} else if (!(blockState2.getBlock() instanceof FallingLayer) && !(blockState2.getBlock() instanceof SpreadingLayer)) {
+			return false;
+		} else {
+			int i = LightEngine.getLightBlockInto(levelReader, blockState, blockPos, blockState2, blockPos2, Direction.UP, blockState2.getLightBlock(levelReader, blockPos2));
+			return i < levelReader.getMaxLightLevel();
+		}
+	}
+	@Unique private static boolean terrain$canBeGrass(BlockState blockState, LevelReader levelReader, BlockPos blockPos) {
+		BlockPos blockPos2 = blockPos.above();
+		BlockState blockState2 = levelReader.getBlockState(blockPos2);
+		if (blockState2.is(Blocks.SNOW) && (Integer)blockState2.getValue(SnowLayerBlock.LAYERS) == 1) {
+			return true;
+		} else if (blockState2.getFluidState().getAmount() == 8) {
+			return false;
+		} else if (blockState2.getBlock() instanceof SpreadingLayer) {
+			return false;
+		} else if (blockState2.getBlock() instanceof FallingLayer) {
 			return false;
 		} else {
 			int i = LightEngine.getLightBlockInto(levelReader, blockState, blockPos, blockState2, blockPos2, Direction.UP, blockState2.getLightBlock(levelReader, blockPos2));
@@ -45,42 +65,41 @@ public abstract class SpreadingSnowyDirtBlockMixin extends SnowyDirtBlock {
 		super(null);
 	}
 
-	@Inject(method = "randomTick", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/block/state/BlockState;is(Lnet/minecraft/world/level/block/Block;)Z"), cancellable = true)
-	private void randomTick(BlockState blockState, ServerLevel serverLevel, BlockPos blockPos, RandomSource randomSource, CallbackInfo ci) {
-		if (!canBeGrass(blockState, serverLevel, blockPos)) {
-			serverLevel.setBlockAndUpdate(blockPos, Blocks.DIRT.defaultBlockState());
-			ci.cancel();
-		} else {
-			if (serverLevel.getMaxLocalRawBrightness(blockPos.above()) >= 9) {
-				BlockState blockState2 = this.defaultBlockState();
 
-				for(int i = 0; i < 4; ++i) {
-					BlockPos blockPos2 = blockPos.offset(randomSource.nextInt(3) - 1, randomSource.nextInt(5) - 3, randomSource.nextInt(3) - 1);
-					if (serverLevel.getBlockState(blockPos2).getBlock() instanceof LayerBlock  && ((LayerBlock) serverLevel.getBlockState(blockPos2).getBlock()).isOvergrowable() && canPropagate(blockState2, serverLevel, blockPos2)) {
-						if (serverLevel.getBlockState(blockPos2).getValue(LayerBlock.LAYERS) == LayerBlock.MAX_LAYERS) {
-							serverLevel.setBlockAndUpdate(blockPos2, (BlockState)blockState2.setValue(SNOWY, serverLevel.getBlockState(blockPos2.above()).is(Blocks.SNOW)));
-							ci.cancel();
-						} else if (serverLevel.getBlockState(blockPos2).getValue(LayerBlock.LAYERS) != LayerBlock.MAX_LAYERS) {
-							if (blockState2.getBlock().equals(Blocks.GRASS_BLOCK)) {
-								serverLevel.setBlockAndUpdate(blockPos2, ModBlocks.GRASS_LAYER.get().defaultBlockState().setValue(LayerBlock.LAYERS, serverLevel.getBlockState(blockPos2).getValue(LayerBlock.LAYERS)));
-							}
-							if (blockState2.getBlock().equals(Blocks.MYCELIUM)) {
-								serverLevel.setBlockAndUpdate(blockPos2, ModBlocks.MYCELIUM_LAYER.get().defaultBlockState().setValue(LayerBlock.LAYERS, serverLevel.getBlockState(blockPos2).getValue(LayerBlock.LAYERS)));
-							}
+	@Inject(method = "randomTick", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/block/state/BlockState;is(Lnet/minecraft/world/level/block/Block;)Z"), cancellable = true)
+	private void randomTick(BlockState state, ServerLevel level, BlockPos pos, RandomSource random, CallbackInfo ci) {
+		if (!terrain$canBeGrass(state, level, pos)) {
+			level.setBlockAndUpdate(pos, Blocks.DIRT.defaultBlockState());
+			ci.cancel();
+		} else if (level.getMaxLocalRawBrightness(pos.above()) >= 9) {
+			BlockState origin_state = this.defaultBlockState();
+			for(int i = 0; i < FORSIZE; ++i) {
+				BlockPos target_pos = pos.offset(random.nextInt(3) - 1, random.nextInt(5) - 3, random.nextInt(3) - 1);
+				BlockState target_state = level.getBlockState(target_pos);
+
+				if (origin_state.hasProperty(FallingLayer.LAYERS)) {
+					if (target_state.hasProperty(FallingLayer.LAYERS) && ModBlocks.IsLayerOvergrowable(target_state) && (terrain$canBeGrass(target_state, level, target_pos) && !level.getFluidState(target_pos).is(FluidTags.WATER))) {
+						int val = target_state.getValue(FallingLayer.LAYERS); if (val != 8) {
+							level.setBlockAndUpdate(target_pos, origin_state.setValue(FallingLayer.LAYERS,val));
+						} else {
+							level.setBlockAndUpdate(target_pos, ModBlocks.GetFullBlockToGrow(origin_state));
+						}
+						ci.cancel();
+					} else {
+						if(target_state.is(Blocks.DIRT) && (terrain$canBeGrass(target_state, level, target_pos) && !level.getFluidState(target_pos).is(FluidTags.WATER))) {
+							level.setBlockAndUpdate(target_pos, ModBlocks.GetFullBlockToGrow(origin_state));
 							ci.cancel();
 						}
 					}
-//					if (serverLevel.getBlockState(blockPos2).getBlock() instanceof LayerBlock && ((LayerBlock) serverLevel.getBlockState(blockPos2).getBlock()).isOvergrowable() &&
-//						serverLevel.getBlockState(blockPos2).hasProperty(LayerBlock.LAYERS) && serverLevel.getBlockState(blockPos2).getValue(LayerBlock.LAYERS) == LayerBlock.MAX_LAYERS &&
-//						canPropagate(blockState2, serverLevel, blockPos2)) {
-//						serverLevel.setBlockAndUpdate(blockPos2, (BlockState)blockState2.setValue(SNOWY, serverLevel.getBlockState(blockPos2.above()).is(Blocks.SNOW)));
-//						ci.cancel();
-//					}
-
-
+					ci.cancel();
+				} else {
+					if (target_state.hasProperty(FallingLayer.LAYERS) && ModBlocks.IsLayerOvergrowable(target_state) && (terrain$canBeGrass(target_state, level, target_pos) && !level.getFluidState(target_pos).is(FluidTags.WATER))) {
+						level.setBlockAndUpdate(target_pos, ModBlocks.GetLayerBlockToGrow(origin_state, target_state.getValue(FallingLayer.LAYERS)));
+						ci.cancel();
+					}
+					if (!terrain$canBeGrass(target_state, level, target_pos)) {ci.cancel();}
 				}
 			}
-
 		}
 	}
 }

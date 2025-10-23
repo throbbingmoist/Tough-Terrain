@@ -14,7 +14,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.material.Fluids;
 import net.moist.Terrain;
-import net.moist.block.content.LayerBlockNoFall;
+import net.moist.block.content.SpreadingLayer;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -42,21 +42,21 @@ public class LayerItemNoFall extends BlockItem {
 
 		Terrain.LOGGER.debug(context.getItemInHand().getItem().toString());
 		BlockState existingState = level.getBlockState(pos);
-			if (existingState.getBlock() instanceof LayerBlockNoFall && existingState.getBlock() == this.getBlock()) {
-				int currentLayers = existingState.getValue(LayerBlockNoFall.LAYERS);
-				if (currentLayers < LayerBlockNoFall.MAX_LAYERS) {
+			if (existingState.getBlock() instanceof SpreadingLayer && existingState.getBlock() == this.getBlock()) {
+				int currentLayers = existingState.getValue(SpreadingLayer.LAYERS);
+				if (currentLayers < SpreadingLayer.MAX_LAYERS) {
 					if (!level.isClientSide) {
 						int layers = currentLayers + this.getLayerAmount();
-						if (layers > LayerBlockNoFall.MAX_LAYERS) {
+						if (layers > SpreadingLayer.MAX_LAYERS) {
 							if (level.getBlockState(pos.above()).canBeReplaced()) {
-								level.setBlock(pos, existingState.setValue(LayerBlockNoFall.LAYERS, LayerBlockNoFall.MAX_LAYERS).setValue(BlockStateProperties.WATERLOGGED,level.getFluidState(pos).is(Fluids.WATER)), 11);
-								level.setBlock(pos.above(), existingState.setValue(LayerBlockNoFall.LAYERS, layers - LayerBlockNoFall.MAX_LAYERS).setValue(BlockStateProperties.WATERLOGGED,level.getFluidState(pos.above()).is(Fluids.WATER)), 11);
+								level.setBlock(pos, existingState.setValue(SpreadingLayer.LAYERS, SpreadingLayer.MAX_LAYERS).setValue(BlockStateProperties.WATERLOGGED,level.getFluidState(pos).is(Fluids.WATER)), 11);
+								level.setBlock(pos.above(), existingState.setValue(SpreadingLayer.LAYERS, layers - SpreadingLayer.MAX_LAYERS).setValue(BlockStateProperties.WATERLOGGED,level.getFluidState(pos.above()).is(Fluids.WATER)), 11);
 
 							} else {
 								return InteractionResult.FAIL;
 							}
 						} else {
-							level.setBlock(pos, existingState.setValue(LayerBlockNoFall.LAYERS, layers).setValue(BlockStateProperties.WATERLOGGED,level.getFluidState(pos).is(Fluids.WATER)), 11);
+							level.setBlock(pos, existingState.setValue(SpreadingLayer.LAYERS, layers).setValue(BlockStateProperties.WATERLOGGED,level.getFluidState(pos).is(Fluids.WATER)), 11);
 						}
 						level.playSound(null, pos, existingState.getSoundType().getPlaceSound(), SoundSource.BLOCKS, 1.0F, 0.8F + level.random.nextFloat() * 0.4F);
 						if ((context.getPlayer() != null) && (!context.getPlayer().isCreative())) {
@@ -80,7 +80,7 @@ public class LayerItemNoFall extends BlockItem {
 
 		if (placementState.canBeReplaced(blockPlaceContext)) {
 			int layers = this.getLayerAmount();
-			BlockState newState = this.getBlock().defaultBlockState().setValue(LayerBlockNoFall.LAYERS, Math.min(layers, LayerBlockNoFall.MAX_LAYERS)).setValue(BlockStateProperties.WATERLOGGED,level.getFluidState(placementPos).is(Fluids.WATER));
+			BlockState newState = this.getBlock().defaultBlockState().setValue(SpreadingLayer.LAYERS, Math.min(layers, SpreadingLayer.MAX_LAYERS)).setValue(BlockStateProperties.WATERLOGGED,level.getFluidState(placementPos).is(Fluids.WATER));
 
 			if (!level.isClientSide) {
 				level.setBlock(placementPos, newState, 11);

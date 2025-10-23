@@ -26,21 +26,21 @@ import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import org.jetbrains.annotations.NotNull;
 
-public class LayerBlock extends FallingBlock implements SimpleWaterloggedBlock {
+public class FallingLayer extends FallingBlock implements SimpleWaterloggedBlock {
 	public static final IntegerProperty LAYERS = IntegerProperty.create("layers", 1, 8);
 	public static final int MAX_LAYERS = 8;
 
-	public static final MapCodec<LayerBlock> CODEC = RecordCodecBuilder.mapCodec(instance ->
+	public static final MapCodec<FallingLayer> CODEC = RecordCodecBuilder.mapCodec(instance ->
 		instance.group(
 			propertiesCodec()
-		).apply(instance, LayerBlock::new
+		).apply(instance, FallingLayer::new
 		));
 	private boolean overgrowable;
 	private Block packingBlock;
 	private boolean packInstantly;
 
 	@Override
-	public MapCodec<LayerBlock> codec() {
+	public MapCodec<FallingLayer> codec() {
 		return CODEC;
 	}
 	// ----------------------------
@@ -58,21 +58,21 @@ public class LayerBlock extends FallingBlock implements SimpleWaterloggedBlock {
 	};
 
 
-	public LayerBlock(BlockBehaviour.Properties properties) {
+	public FallingLayer(BlockBehaviour.Properties properties) {
 		super(properties.randomTicks());
 		this.overgrowable = false;
 		this.packingBlock = Blocks.AIR;
 		this.packInstantly = false;
 		this.registerDefaultState(this.stateDefinition.any().setValue(LAYERS, 1).setValue(BlockStateProperties.WATERLOGGED, false));
 	}
-	public LayerBlock(BlockBehaviour.Properties properties, boolean overgrowable) {
+	public FallingLayer(BlockBehaviour.Properties properties, boolean overgrowable) {
 		super(properties.randomTicks());
 		this.overgrowable = overgrowable;
 		this.packingBlock = Blocks.AIR;
 		this.packInstantly = false;
 		this.registerDefaultState(this.stateDefinition.any().setValue(LAYERS, 1).setValue(BlockStateProperties.WATERLOGGED, false));
 	}
-	public LayerBlock(BlockBehaviour.Properties properties, boolean overgrowable, Block packingBlock) {
+	public FallingLayer(BlockBehaviour.Properties properties, boolean overgrowable, Block packingBlock) {
 		super(properties.randomTicks());
 		this.overgrowable = overgrowable;
 		this.packingBlock = packingBlock;
@@ -104,14 +104,14 @@ public class LayerBlock extends FallingBlock implements SimpleWaterloggedBlock {
 	public boolean isOvergrowable() {
 		return this.overgrowable;
 	}
-	public LayerBlock overgrowable(boolean bool) {
+	public FallingLayer overgrowable(boolean bool) {
 		this.overgrowable = bool;
 		return this;
 	}
-	public LayerBlock packsTo(Block block) {
+	public FallingLayer packsTo(Block block) {
 		return packsTo(block, false);
 	}
-	public LayerBlock packsTo(Block block, boolean packInstantly) {
+	public FallingLayer packsTo(Block block, boolean packInstantly) {
 		this.packingBlock = block;
 		this.packInstantly = packInstantly;
 		return this;
@@ -124,7 +124,7 @@ public class LayerBlock extends FallingBlock implements SimpleWaterloggedBlock {
 		BlockState existingState = level.getBlockState(pos);
 
 
-		if (existingState.getBlock() instanceof LayerBlock) {
+		if (existingState.getBlock() instanceof FallingLayer) {
 			int currentLayers = existingState.getValue(LAYERS);
 			if (currentLayers < MAX_LAYERS) {
 				return existingState.setValue(LAYERS, currentLayers + 1);
@@ -189,7 +189,7 @@ public class LayerBlock extends FallingBlock implements SimpleWaterloggedBlock {
 
 	public boolean supported(BlockState state, LevelReader level, BlockPos pos) {
 		BlockState blockStateBelow = level.getBlockState(pos.below());
-		return !(blockStateBelow.getBlock() instanceof LayerBlock) || !(blockStateBelow.getValue(LAYERS) < 8);
+		return !(blockStateBelow.getBlock() instanceof FallingLayer) || !(blockStateBelow.getValue(LAYERS) < 8);
 	}
 
 
