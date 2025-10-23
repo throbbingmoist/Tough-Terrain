@@ -16,7 +16,7 @@ allprojects {
 
 fusioner {
     packageGroup = project.group // Package group of the merged jar.
-    mergedJarName = "${project.name}-merged" // The name of the output jar
+    mergedJarName = "${project.name}-${project.minecraft_version}" // The name of the output jar
     outputDirectory = "artifacts/fused" // Where the merged jar will be stored. Defaults to artifacts/fused
     jarVersion = project.version // The version of the mod/jar
 

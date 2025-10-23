@@ -14,23 +14,23 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.material.Fluids;
 import net.moist.Terrain;
-import net.moist.block.content.FallingLayer;
+import net.moist.block.content.SpreadingLayer;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public class LayerItem extends BlockItem {
+public class LayerItemNoFall extends BlockItem {
 	private final int layerAmount;
 	private final String item_suffix;
 
 
-	public LayerItem(Block block, Properties properties, int layerAmount, @Nullable String itemSuffix) {
+	public LayerItemNoFall(Block block, Properties properties, int layerAmount, @Nullable String itemSuffix) {
 		super(block, properties);
 
 		this.layerAmount = layerAmount;
 		this.item_suffix = itemSuffix != null ? itemSuffix : "";
 	}
 
-	public LayerItem(Block block, Properties properties, int layerAmount) {
+	public LayerItemNoFall(Block block, Properties properties, int layerAmount) {
 		this(block, properties, layerAmount, null);
 	}
 
@@ -42,21 +42,21 @@ public class LayerItem extends BlockItem {
 
 		Terrain.LOGGER.debug(context.getItemInHand().getItem().toString());
 		BlockState existingState = level.getBlockState(pos);
-			if (existingState.getBlock() instanceof FallingLayer && existingState.getBlock() == this.getBlock()) {
-				int currentLayers = existingState.getValue(FallingLayer.LAYERS);
-				if (currentLayers < FallingLayer.MAX_LAYERS) {
+			if (existingState.getBlock() instanceof SpreadingLayer && existingState.getBlock() == this.getBlock()) {
+				int currentLayers = existingState.getValue(SpreadingLayer.LAYERS);
+				if (currentLayers < SpreadingLayer.MAX_LAYERS) {
 					if (!level.isClientSide) {
 						int layers = currentLayers + this.getLayerAmount();
-						if (layers > FallingLayer.MAX_LAYERS) {
+						if (layers > SpreadingLayer.MAX_LAYERS) {
 							if (level.getBlockState(pos.above()).canBeReplaced()) {
-								level.setBlock(pos, existingState.setValue(FallingLayer.LAYERS, FallingLayer.MAX_LAYERS).setValue(BlockStateProperties.WATERLOGGED,level.getFluidState(pos).is(Fluids.WATER)), 11);
-								level.setBlock(pos.above(), existingState.setValue(FallingLayer.LAYERS, layers - FallingLayer.MAX_LAYERS).setValue(BlockStateProperties.WATERLOGGED,level.getFluidState(pos.above()).is(Fluids.WATER)), 11);
+								level.setBlock(pos, existingState.setValue(SpreadingLayer.LAYERS, SpreadingLayer.MAX_LAYERS).setValue(BlockStateProperties.WATERLOGGED,level.getFluidState(pos).is(Fluids.WATER)), 11);
+								level.setBlock(pos.above(), existingState.setValue(SpreadingLayer.LAYERS, layers - SpreadingLayer.MAX_LAYERS).setValue(BlockStateProperties.WATERLOGGED,level.getFluidState(pos.above()).is(Fluids.WATER)), 11);
 
 							} else {
 								return InteractionResult.FAIL;
 							}
 						} else {
-							level.setBlock(pos, existingState.setValue(FallingLayer.LAYERS, layers).setValue(BlockStateProperties.WATERLOGGED,level.getFluidState(pos).is(Fluids.WATER)), 11);
+							level.setBlock(pos, existingState.setValue(SpreadingLayer.LAYERS, layers).setValue(BlockStateProperties.WATERLOGGED,level.getFluidState(pos).is(Fluids.WATER)), 11);
 						}
 						level.playSound(null, pos, existingState.getSoundType().getPlaceSound(), SoundSource.BLOCKS, 1.0F, 0.8F + level.random.nextFloat() * 0.4F);
 						if ((context.getPlayer() != null) && (!context.getPlayer().isCreative())) {
@@ -80,7 +80,7 @@ public class LayerItem extends BlockItem {
 
 		if (placementState.canBeReplaced(blockPlaceContext)) {
 			int layers = this.getLayerAmount();
-			BlockState newState = this.getBlock().defaultBlockState().setValue(FallingLayer.LAYERS, Math.min(layers, FallingLayer.MAX_LAYERS)).setValue(BlockStateProperties.WATERLOGGED,level.getFluidState(placementPos).is(Fluids.WATER));
+			BlockState newState = this.getBlock().defaultBlockState().setValue(SpreadingLayer.LAYERS, Math.min(layers, SpreadingLayer.MAX_LAYERS)).setValue(BlockStateProperties.WATERLOGGED,level.getFluidState(placementPos).is(Fluids.WATER));
 
 			if (!level.isClientSide) {
 				level.setBlock(placementPos, newState, 11);

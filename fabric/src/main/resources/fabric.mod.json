@@ -11,7 +11,7 @@
     "homepage": ""
   },
   "license": "All-Rights-Reserved",
-  "icon": "assets/tough_terrain/icon.png",
+  "icon": "assets/tough_terrain/logo.png",
   "environment": "*",
   "entrypoints": {
     "main": [

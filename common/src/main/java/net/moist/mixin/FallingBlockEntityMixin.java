@@ -6,7 +6,7 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.item.FallingBlockEntity;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
-import net.moist.block.content.LayerBlock;
+import net.moist.block.content.FallingLayer;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
@@ -35,44 +35,44 @@ public abstract class FallingBlockEntityMixin extends Entity {
 		// Use a velocity check to determine if the block is about to land
 		if (entity.getDeltaMovement().y() < 0 && !level.isClientSide) {
 			// Check if the block at the position below is our stacking block
-			if (existingState.getBlock() instanceof LayerBlock && fallingBlockState.getBlock() instanceof LayerBlock && existingState.is(fallingBlockState.getBlock())) {
-				int currentLayers = existingState.getValue(LayerBlock.LAYERS);
-				int fallingLayers = fallingBlockState.getValue(LayerBlock.LAYERS);
+			if (existingState.getBlock() instanceof FallingLayer && fallingBlockState.getBlock() instanceof FallingLayer && existingState.is(fallingBlockState.getBlock())) {
+				int currentLayers = existingState.getValue(FallingLayer.LAYERS);
+				int fallingLayers = fallingBlockState.getValue(FallingLayer.LAYERS);
 				int totalLayers = currentLayers + fallingLayers;
 
-				if (totalLayers <= LayerBlock.MAX_LAYERS) {
-					BlockState newState = existingState.setValue(LayerBlock.LAYERS, totalLayers);
+				if (totalLayers <= FallingLayer.MAX_LAYERS) {
+					BlockState newState = existingState.setValue(FallingLayer.LAYERS, totalLayers);
 					level.setBlock(currentPos, newState, 11);
 					level.playSound(null, currentPos, this.blockState.getSoundType().getPlaceSound(), SoundSource.BLOCKS, 1f, 0.2f);
 					entity.discard();
 					ci.cancel();
 				} else {
-					int excessLayers = totalLayers - LayerBlock.MAX_LAYERS;
-					BlockState newMaxState = existingState.setValue(LayerBlock.LAYERS, LayerBlock.MAX_LAYERS);
+					int excessLayers = totalLayers - FallingLayer.MAX_LAYERS;
+					BlockState newMaxState = existingState.setValue(FallingLayer.LAYERS, FallingLayer.MAX_LAYERS);
 					level.setBlock(currentPos, newMaxState, 11);
 					level.playSound(null, currentPos, this.blockState.getSoundType().getPlaceSound(), SoundSource.BLOCKS, 1f, 0.2f);
 
-					BlockState excessState = fallingBlockState.setValue(LayerBlock.LAYERS, excessLayers);
+					BlockState excessState = fallingBlockState.setValue(FallingLayer.LAYERS, excessLayers);
 					FallingBlockEntity.fall(level, currentPos.above(), excessState);
 
 					entity.discard();
 					ci.cancel();
 				}
-			} else if (existingState.getBlock() instanceof LayerBlock && fallingBlockState.getBlock() instanceof LayerBlock) {
+			} else if (existingState.getBlock() instanceof FallingLayer && fallingBlockState.getBlock() instanceof FallingLayer) {
 				if (existingState.canBeReplaced()) {
 					if (level.setBlock(currentPos, fallingBlockState, 11)) {
 						level.playSound(null, currentPos, this.blockState.getSoundType().getPlaceSound(), SoundSource.BLOCKS, 1f, 0.2f);
 						entity.discard();
 						ci.cancel();
 					} else {
-						for (int i = 1; i <= fallingBlockState.getValue(LayerBlock.LAYERS); i++) {
+						for (int i = 1; i <= fallingBlockState.getValue(FallingLayer.LAYERS); i++) {
 							entity.spawnAtLocation(this.getBlockState().getBlock());
 						}
 						entity.discard();
 						ci.cancel();
 					}
 				} else {
-					for (int i = 1; i <= fallingBlockState.getValue(LayerBlock.LAYERS); i++) {
+					for (int i = 1; i <= fallingBlockState.getValue(FallingLayer.LAYERS); i++) {
 						entity.spawnAtLocation(this.getBlockState().getBlock());
 					}
 					entity.discard();

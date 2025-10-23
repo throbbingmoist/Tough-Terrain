@@ -35,7 +35,8 @@ public final class Terrain {
 		ModItems.register();
 
 		ColorHandler.registerBlockColor(ModBlocks.LOOSE_DIRT, ModBlocks.LOOSE_SAND, ModBlocks.LOOSE_RED_SAND, ModBlocks.LOOSE_GRAVEL);
-		//ColorHandler.registerPowderColor(ModBlocks.LOOSE_RED_CONCRETE_POWDER);
+		ColorHandler.registerGrassColor(ModBlocks.GRASS_LAYER);
+
 		LoosenSoilEvent.subscribe();
 	}
 }

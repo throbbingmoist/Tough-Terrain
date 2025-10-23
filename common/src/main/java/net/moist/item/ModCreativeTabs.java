@@ -17,7 +17,6 @@ public class ModCreativeTabs {
 	public static RegistrySupplier<CreativeModeTab> TOUGH_TERRAIN_TAB;
 
 	public static void initTabs(){
-		Terrain.LOGGER.info("Registering tabs!");
 		TOUGH_TERRAIN_TAB = TABS.register("ground",
 			() -> CreativeTabRegistry.create(Component.translatable("category.tough_terrain"),
 				() -> new ItemStack(Items.IRON_SHOVEL)

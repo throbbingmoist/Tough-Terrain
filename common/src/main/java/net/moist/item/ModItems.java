@@ -1,5 +1,6 @@
 package net.moist.item;
 
+import dev.architectury.registry.client.rendering.ColorHandlerRegistry;
 import dev.architectury.registry.registries.DeferredRegister;
 import dev.architectury.registry.registries.RegistrySupplier;
 import net.minecraft.core.registries.Registries;
@@ -9,6 +10,8 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
 import net.moist.Terrain;
 import net.moist.item.content.LayerItem;
+import net.moist.item.content.LayerItemNoFall;
+import net.moist.util.ColorHandler;
 
 import java.util.function.Supplier;
 
@@ -31,6 +34,22 @@ public class ModItems {
 		return ITEMS.register(Terrain.getID("loose_"+id), () -> new LayerItem(layer.get(), new Item.Properties().arch$tab(tab), 1));
 	}
 
+	public static RegistrySupplier<Item> registerTintedGrassLayerItemVariants(String id, RegistrySupplier<Block> layer, RegistrySupplier<CreativeModeTab> tab) {
+		RegistrySupplier<Item> registeredBlock = ITEMS.register(Terrain.getID(id+"_block"), () -> new LayerItemNoFall(layer.get(), new Item.Properties().arch$tab(tab), 8, "_block"));
+		ColorHandlerRegistry.registerItemColors(ColorHandler.GRASS_ITEM_TINT_PROVIDER, () -> registeredBlock.get());
+		RegistrySupplier<Item> registeredSlab = ITEMS.register(Terrain.getID(id+"_slab"), () -> new LayerItemNoFall(layer.get(), new Item.Properties().arch$tab(tab), 4, "_slab"));
+		ColorHandlerRegistry.registerItemColors(ColorHandler.GRASS_ITEM_TINT_PROVIDER, () -> registeredSlab.get());
+		RegistrySupplier<Item> registered = ITEMS.register(Terrain.getID(id), () -> new LayerItemNoFall(layer.get(), new Item.Properties().arch$tab(tab), 1));
+		ColorHandlerRegistry.registerItemColors(ColorHandler.GRASS_ITEM_TINT_PROVIDER, () ->  registered.get());
+
+		return registered;
+	}
+	public static RegistrySupplier<Item> registerGrassLayerItemVariants(String id, RegistrySupplier<Block> layer, RegistrySupplier<CreativeModeTab> tab) {
+		ITEMS.register(Terrain.getID(""+id+"_block"), () -> new LayerItemNoFall(layer.get(), new Item.Properties().arch$tab(tab), 8, "_block"));
+		ITEMS.register(Terrain.getID(""+id+"_slab"), () -> new LayerItemNoFall(layer.get(), new Item.Properties().arch$tab(tab), 4, "_slab"));
+		return ITEMS.register(Terrain.getID(""+id), () -> new LayerItemNoFall(layer.get(), new Item.Properties().arch$tab(tab), 1));
+	}
+
 	public static void registerLayerItemVariants(String id, Block layer) {
 		ITEMS.register(Terrain.getID("loose_"+id+"_block"), () -> new LayerItem(layer, new Item.Properties(), 8, "_block"));
 		ITEMS.register(Terrain.getID("loose_"+id+"_slab"), () -> new LayerItem(layer, new Item.Properties(), 4, "_slab"));
@@ -48,7 +67,7 @@ public class ModItems {
 	}
 
 	public static void register() {
-		Terrain.LOGGER.info("Registering items!");
+		Terrain.LOGGER.debug("Registering items!");
 		ITEMS.register();
 	}
 }

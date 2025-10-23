@@ -11,7 +11,7 @@ authors = "moist"
 description = '''
 A mod which makes digging in the dirt a bit more interesting.
 '''
-#logoFile = ""
+logoFile = "assets/tough_terrain/logo.png"
 
 [[dependencies.tough_terrain]]
 modId = "neoforge"
