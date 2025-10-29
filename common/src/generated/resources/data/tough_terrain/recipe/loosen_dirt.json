@@ -1,6 +1,8 @@
 {
   "type": "tough_terrain:world_loosen",
-  "input": "minecraft:dirt",
+  "input": {
+    "block": "minecraft:dirt"
+  },
   "result": {
     "Name": "tough_terrain:loose_dirt",
     "Properties": {

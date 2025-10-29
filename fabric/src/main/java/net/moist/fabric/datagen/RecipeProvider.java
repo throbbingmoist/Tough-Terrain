@@ -37,7 +37,7 @@ public class RecipeProvider extends FabricRecipeProvider {
 			.unlockedBy("any", RecipeProvider.has(ModBlocks.LOOSE_SAND.get()))
 			.save(exporter, Terrain.getID("smelt_loose_sand_block"));
 
-		createLooseningRecipe(exporter, "loosen_dirt", Blocks.DIRT, ModBlocks.LOOSE_DIRT);
+		createLooseningRecipe(exporter, "loosen_dirt", Blocks.DIRT, ModBlocks.LOOSE_DIRT.get());
 	}
 //
 
@@ -46,10 +46,6 @@ public class RecipeProvider extends FabricRecipeProvider {
 		BlockState finalResult = result.defaultBlockState().hasProperty(FallingLayer.LAYERS) ? result.defaultBlockState().setValue(FallingLayer.LAYERS, FallingLayer.MAX_LAYERS) : result.defaultBlockState();
 		output.accept(Terrain.getID(id), new LooseningRecipe(input, finalResult), null);
 	}
-	public void createLooseningRecipe(RecipeOutput output, String id, RegistrySupplier<Block> input, RegistrySupplier<Block> result) {createLooseningRecipe(output, id, input.get(), result.get());}
-	public void createLooseningRecipe(RecipeOutput output, String id, Block input, RegistrySupplier<Block> result) {createLooseningRecipe(output, id, input, result.get());}
-	public void createLooseningRecipe(RecipeOutput output, String id, RegistrySupplier<Block> input, Block result) {createLooseningRecipe(output, id, input.get(), result);}
-
 
 	public void createLayerRecipes(RecipeOutput output, RegistrySupplier<Block> block) {
 
