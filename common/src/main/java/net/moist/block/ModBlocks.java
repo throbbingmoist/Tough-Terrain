@@ -13,7 +13,6 @@ import net.moist.Terrain;
 import net.moist.block.content.SpreadingLayer;
 import net.moist.item.ModCreativeTabs;
 import net.moist.item.ModItems;
-import net.moist.event.LoosenSoilEvent;
 
 public class ModBlocks {
 	public static DeferredRegister<Block> BLOCKS = DeferredRegister.create(Terrain.MOD_ID, Registries.BLOCK);
@@ -102,7 +101,6 @@ public class ModBlocks {
 		Terrain.LOGGER.debug("Registering blocks!");
 
 		BLOCKS.register();
-		LoosenSoilEvent.loosenBlock(Blocks.DIRT,LOOSE_DIRT);
 	}
 
 

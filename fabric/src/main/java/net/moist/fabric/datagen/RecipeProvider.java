@@ -9,9 +9,12 @@ import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.crafting.SmeltingRecipe;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.state.BlockState;
 import net.moist.Terrain;
 import net.moist.block.ModBlocks;
+import net.moist.block.content.FallingLayer;
 import net.moist.item.ModItems;
+import net.moist.recipe.LooseningRecipe;
 
 import java.util.concurrent.CompletableFuture;
 
@@ -33,8 +36,21 @@ public class RecipeProvider extends FabricRecipeProvider {
 			.smelting(Ingredient.of(ModItems.ITEMS.getRegistrar().get(Terrain.getID("loose_sand_block")), ModItems.ITEMS.getRegistrar().get(Terrain.getID("loose_red_sand_block"))), RecipeCategory.BUILDING_BLOCKS, Blocks.GLASS, 0.1f, 200)
 			.unlockedBy("any", RecipeProvider.has(ModBlocks.LOOSE_SAND.get()))
 			.save(exporter, Terrain.getID("smelt_loose_sand_block"));
+
+		createLooseningRecipe(exporter, "loosen_dirt", Blocks.DIRT, ModBlocks.LOOSE_DIRT);
 	}
 //
+
+
+	public void createLooseningRecipe(RecipeOutput output, String id, Block input, Block result) {
+		BlockState finalResult = result.defaultBlockState().hasProperty(FallingLayer.LAYERS) ? result.defaultBlockState().setValue(FallingLayer.LAYERS, FallingLayer.MAX_LAYERS) : result.defaultBlockState();
+		output.accept(Terrain.getID(id), new LooseningRecipe(input, finalResult), null);
+	}
+	public void createLooseningRecipe(RecipeOutput output, String id, RegistrySupplier<Block> input, RegistrySupplier<Block> result) {createLooseningRecipe(output, id, input.get(), result.get());}
+	public void createLooseningRecipe(RecipeOutput output, String id, Block input, RegistrySupplier<Block> result) {createLooseningRecipe(output, id, input, result.get());}
+	public void createLooseningRecipe(RecipeOutput output, String id, RegistrySupplier<Block> input, Block result) {createLooseningRecipe(output, id, input.get(), result);}
+
+
 	public void createLayerRecipes(RecipeOutput output, RegistrySupplier<Block> block) {
 
 		String id = block.get().asItem().getDescriptionId().replace("block." + Terrain.MOD_ID + ".", "");

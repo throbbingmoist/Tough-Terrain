@@ -1,0 +1,11 @@
+{
+  "type": "tough_terrain:world_loosen",
+  "input": "minecraft:dirt",
+  "result": {
+    "Name": "tough_terrain:loose_dirt",
+    "Properties": {
+      "layers": "8",
+      "waterlogged": "false"
+    }
+  }
+}
