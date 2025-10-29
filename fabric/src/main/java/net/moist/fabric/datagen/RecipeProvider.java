@@ -4,10 +4,7 @@ import dev.architectury.registry.registries.RegistrySupplier;
 import net.fabricmc.fabric.api.datagen.v1.FabricDataOutput;
 import net.fabricmc.fabric.api.datagen.v1.provider.FabricRecipeProvider;
 import net.minecraft.core.HolderLookup;
-import net.minecraft.data.recipes.RecipeCategory;
-import net.minecraft.data.recipes.RecipeOutput;
-import net.minecraft.data.recipes.ShapelessRecipeBuilder;
-import net.minecraft.data.recipes.SimpleCookingRecipeBuilder;
+import net.minecraft.data.recipes.*;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.crafting.SmeltingRecipe;
 import net.minecraft.world.level.block.Block;
@@ -30,6 +27,7 @@ public class RecipeProvider extends FabricRecipeProvider {
 		createLayerRecipes(exporter, ModBlocks.LOOSE_SAND);
 		createLayerRecipes(exporter, ModBlocks.LOOSE_RED_SAND);
 		createLayerRecipes(exporter, ModBlocks.LOOSE_GRAVEL);
+
 
 		SimpleCookingRecipeBuilder
 			.smelting(Ingredient.of(ModItems.ITEMS.getRegistrar().get(Terrain.getID("loose_sand_block")), ModItems.ITEMS.getRegistrar().get(Terrain.getID("loose_red_sand_block"))), RecipeCategory.BUILDING_BLOCKS, Blocks.GLASS, 0.1f, 200)
