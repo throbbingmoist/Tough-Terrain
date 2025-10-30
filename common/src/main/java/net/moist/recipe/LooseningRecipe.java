@@ -4,7 +4,6 @@ package net.moist.recipe;
 import com.mojang.datafixers.util.Either;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
-import net.minecraft.core.HolderSet;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.*;
@@ -36,8 +35,8 @@ public class LooseningRecipe implements Recipe<RecipeInput> {
 	public ItemStack getResultItem(HolderLookup.Provider provider) {return null;}
 
 
-	public RecipeSerializer<?> getSerializer() {return RecipeTypes.LOOSEN_SERIALIZER.get();}
-	public RecipeType<?> getType() {return RecipeTypes.WORLD_LOOSEN.get();}
+	public RecipeSerializer<?> getSerializer() {return ModRecipes.LOOSEN_SERIALIZER.get();}
+	public RecipeType<?> getType() {return ModRecipes.WORLD_LOOSEN.get();}
 
 	public Either<Block, TagKey<Block>> getInputBlock() { return this.inputBlock; }
 	public BlockState getResultState() { return this.resultState; }

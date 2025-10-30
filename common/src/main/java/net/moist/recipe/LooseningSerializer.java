@@ -6,17 +6,14 @@ import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.NbtOps;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 
-public class WorldRecipeSerializer implements RecipeSerializer<LooseningRecipe> {
+public class LooseningSerializer implements RecipeSerializer<LooseningRecipe> {
 	public static final Codec<Either<Block, TagKey<Block>>> INPUT_CODEC = Codec.either(
 		BuiltInRegistries.BLOCK.byNameCodec().fieldOf("block").codec(),
 		TagKey.codec(Registries.BLOCK).fieldOf("tag").codec());
