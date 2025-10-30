@@ -4,6 +4,9 @@ import dev.architectury.registry.registries.RegistrySupplier;
 import net.fabricmc.fabric.api.datagen.v1.FabricDataOutput;
 import net.fabricmc.fabric.api.datagen.v1.provider.FabricRecipeProvider;
 import net.minecraft.core.HolderLookup;
+import net.minecraft.core.particles.ParticleOptions;
+import net.minecraft.core.particles.ParticleType;
+import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.data.recipes.*;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
@@ -48,20 +51,33 @@ public class RecipeProvider extends FabricRecipeProvider {
 		createLooseningRecipe(exporter, "loosen_dirt", Blocks.DIRT, ModBlocks.LOOSE_DIRT.get());
 
 		// Datagen Testing recipes.
-		//createTransformRecipe(exporter, "bottle_convert_dirt", ModBlocks.LOOSE_DIRT.get(), Items.POTION, SoundEvents.BOTTLE_EMPTY, Blocks.DIRT);
-		//createTransformRecipe(exporter, "clay_convert_dirt", ModBlocks.LOOSE_DIRT.get(), Items.CLAY_BALL, SoundEvents.SLIME_ATTACK, Blocks.DIRT);
+//		TransformRecipe.builder()
+//			.input(ModBlocks.LOOSE_DIRT.get())
+//			.transformItem(Ingredient.of(Items.CLAY_BALL))
+//			.sound(SoundEvents.SLIME_ATTACK)
+//			.particles(ParticleTypes.ITEM, 25)
+//			.result(Blocks.DIRT)
+//			.build("test_recipe", exporter);
+//		TransformRecipe.builder()
+//			.input(ModBlocks.LOOSE_SAND.get())
+//			.transformItem(Ingredient.of(Items.RED_DYE))
+//			.sound(SoundEvents.SLIME_ATTACK)
+//			.particles(ParticleTypes.BLOCK, 25)
+//			.result(ModBlocks.LOOSE_RED_SAND.get().defaultBlockState().setValue(FallingLayer.LAYERS, FallingLayer.MAX_LAYERS))
+//			.build("test_recipe_state", exporter);
+//		TransformRecipe.builder()
+//			.input(ModBlocks.LOOSE_SAND.get())
+//			.transformItem(Ingredient.of(Items.CLAY_BALL))
+//			.sound(SoundEvents.SLIME_ATTACK)
+//			.particles(ParticleTypes.BLOCK, 25)
+//			.result(Blocks.SAND)
+//			.build("test_recipe_block", exporter);
 	}
 
 
 	public void createLooseningRecipe(RecipeOutput output, String id, Block input, Block result) {
 		BlockState finalResult = result.defaultBlockState().hasProperty(FallingLayer.LAYERS) ? result.defaultBlockState().setValue(FallingLayer.LAYERS, FallingLayer.MAX_LAYERS) : result.defaultBlockState();
 		output.accept(Terrain.getID(id), new LooseningRecipe(input, finalResult), null);
-	}
-	public void createTransformRecipe(RecipeOutput output, String id, Block input, Item transformItem, Block result) {createTransformRecipe(output, id, input, Ingredient.of(transformItem), null, result);}
-	public void createTransformRecipe(RecipeOutput output, String id, Block input, Item transformItem, SoundEvent event, Block result) {createTransformRecipe(output, id, input, Ingredient.of(transformItem), event, result);}
-	public void createTransformRecipe(RecipeOutput output, String id, Block input, Ingredient transformItem, @Nullable SoundEvent event, Block result) {
-		BlockState finalResult = result.defaultBlockState().hasProperty(FallingLayer.LAYERS) ? result.defaultBlockState().setValue(FallingLayer.LAYERS, FallingLayer.MAX_LAYERS) : result.defaultBlockState();
-		output.accept(Terrain.getID(id), new TransformRecipe(input, transformItem, event, finalResult), null);
 	}
 
 	public void createLayerRecipes(RecipeOutput output, RegistrySupplier<Block> block) {
