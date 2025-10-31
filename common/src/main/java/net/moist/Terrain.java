@@ -1,17 +1,11 @@
 package net.moist;
 
-import dev.architectury.event.events.client.ClientLifecycleEvent;
-import dev.architectury.injectables.annotations.ExpectPlatform;
-import dev.architectury.registry.registries.DeferredRegister;
-import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.item.Item;
-import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.Blocks;
 import net.moist.block.ModBlocks;
-import net.moist.event.LoosenSoilEvent;
+import net.moist.event.ToughTerrainEvents;
 import net.moist.item.ModCreativeTabs;
 import net.moist.item.ModItems;
+import net.moist.recipe.ModRecipes;
 import net.moist.util.ColorHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -37,6 +31,8 @@ public final class Terrain {
 		ColorHandler.registerBlockColor(ModBlocks.LOOSE_DIRT, ModBlocks.LOOSE_SAND, ModBlocks.LOOSE_RED_SAND, ModBlocks.LOOSE_GRAVEL);
 		ColorHandler.registerGrassColor(ModBlocks.GRASS_LAYER);
 
-		LoosenSoilEvent.subscribe();
+		ModRecipes.setup();
+
+		ToughTerrainEvents.subscribe();
 	}
 }

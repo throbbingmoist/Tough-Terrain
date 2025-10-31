@@ -3,6 +3,7 @@ package net.moist.block;
 import dev.architectury.registry.registries.DeferredRegister;
 import dev.architectury.registry.registries.RegistrySupplier;
 import net.minecraft.core.registries.Registries;
+import net.minecraft.tags.TagKey;
 import net.minecraft.world.level.block.state.BlockState;
 import net.moist.block.content.FallingLayer;
 import net.minecraft.world.level.block.Block;
@@ -13,11 +14,10 @@ import net.moist.block.content.SpreadingLayer;
 import net.moist.item.ModCreativeTabs;
 import net.moist.item.ModItems;
 
-import static net.moist.event.LoosenSoilEvent.loosenBlock;
-
 public class ModBlocks {
 	public static DeferredRegister<Block> BLOCKS = DeferredRegister.create(Terrain.MOD_ID, Registries.BLOCK);
 
+	public static final TagKey<Block> LOOSENS_SURROUNDINGS = TagKey.create(Registries.BLOCK, Terrain.getID("loosens_surroundings"));
 
 	public static  RegistrySupplier<Block> LOOSE_DIRT = registerLayeredBlockPackable("dirt",Blocks.DIRT,Blocks.DIRT, true);
 	public static  RegistrySupplier<Block> LOOSE_SAND = registerLayeredBlockPackable("sand",Blocks.SAND,Blocks.SAND);
@@ -101,7 +101,6 @@ public class ModBlocks {
 		Terrain.LOGGER.debug("Registering blocks!");
 
 		BLOCKS.register();
-		loosenBlock(Blocks.DIRT,LOOSE_DIRT);
 	}
 
 

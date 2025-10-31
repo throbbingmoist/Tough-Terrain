@@ -9,6 +9,8 @@ import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
 import net.moist.Terrain;
 import net.moist.block.ModBlocks;
 
@@ -25,6 +27,8 @@ public class TagProviders {
 			this.tag(BlockTags.MINEABLE_WITH_SHOVEL).add(ModBlocks.LOOSE_DIRT.getKey(),ModBlocks.LOOSE_RED_SAND.getKey(),ModBlocks.LOOSE_SAND.getKey(),ModBlocks.LOOSE_GRAVEL.getKey());
 			this.tag(BlockTags.SMELTS_TO_GLASS).addOptional(Terrain.getID("loose_sand_block"));
 
+			FabricTagProvider<Block>.FabricTagBuilder loosens_surroundings = getOrCreateTagBuilder(ModBlocks.LOOSENS_SURROUNDINGS);
+			loosens_surroundings.add(Blocks.DIRT, Blocks.GRASS_BLOCK, Blocks.PODZOL, Blocks.MYCELIUM, Blocks.COARSE_DIRT, Blocks.ROOTED_DIRT, Blocks.DIRT_PATH);
 		}
 	}
 

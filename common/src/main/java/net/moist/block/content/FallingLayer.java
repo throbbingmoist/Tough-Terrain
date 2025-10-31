@@ -79,6 +79,13 @@ public class FallingLayer extends FallingBlock implements SimpleWaterloggedBlock
 		this.packInstantly = false;
 		this.registerDefaultState(this.stateDefinition.any().setValue(LAYERS, 1).setValue(BlockStateProperties.WATERLOGGED, false));
 	}
+	public FallingLayer(BlockBehaviour.Properties properties, boolean overgrowable, Block packingBlock, boolean packInstantly) {
+		super(properties.randomTicks());
+		this.overgrowable = overgrowable;
+		this.packingBlock = packingBlock;
+		this.packInstantly = packInstantly;
+		this.registerDefaultState(this.stateDefinition.any().setValue(LAYERS, 1).setValue(BlockStateProperties.WATERLOGGED, false));
+	}
 
 	@Override
 	public @NotNull FluidState getFluidState(BlockState state) {
