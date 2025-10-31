@@ -50,28 +50,25 @@ public class RecipeProvider extends FabricRecipeProvider {
 
 		createLooseningRecipe(exporter, "loosen_dirt", Blocks.DIRT, ModBlocks.LOOSE_DIRT.get());
 
-		// Datagen Testing recipes.
-//		TransformRecipe.builder()
-//			.input(ModBlocks.LOOSE_DIRT.get())
-//			.transformItem(Ingredient.of(Items.CLAY_BALL))
-//			.sound(SoundEvents.SLIME_ATTACK)
-//			.particles(ParticleTypes.ITEM, 25)
-//			.result(Blocks.DIRT)
-//			.build("test_recipe", exporter);
-//		TransformRecipe.builder()
-//			.input(ModBlocks.LOOSE_SAND.get())
-//			.transformItem(Ingredient.of(Items.RED_DYE))
-//			.sound(SoundEvents.SLIME_ATTACK)
-//			.particles(ParticleTypes.BLOCK, 25)
-//			.result(ModBlocks.LOOSE_RED_SAND.get().defaultBlockState().setValue(FallingLayer.LAYERS, FallingLayer.MAX_LAYERS))
-//			.build("test_recipe_state", exporter);
-//		TransformRecipe.builder()
-//			.input(ModBlocks.LOOSE_SAND.get())
-//			.transformItem(Ingredient.of(Items.CLAY_BALL))
-//			.sound(SoundEvents.SLIME_ATTACK)
-//			.particles(ParticleTypes.BLOCK, 25)
-//			.result(Blocks.SAND)
-//			.build("test_recipe_block", exporter);
+		TransformRecipe.builder()
+			.input(ModBlocks.LOOSE_DIRT.get()).result(Blocks.DIRT).transformItem(Ingredient.of(Items.POTION))
+			.sound(SoundEvents.BOTTLE_EMPTY).particles(ParticleTypes.SPLASH, 75)
+			.build("transform_dirt_with_bottle", exporter);
+
+		TransformRecipe.builder()
+			.input(ModBlocks.LOOSE_SAND.get()).result(Blocks.SAND).transformItem(Ingredient.of(Items.POTION))
+			.sound(SoundEvents.BOTTLE_EMPTY).particles(ParticleTypes.SPLASH, 75)
+			.build("transform_sand_with_bottle", exporter);
+
+		TransformRecipe.builder()
+			.input(ModBlocks.LOOSE_RED_SAND.get()).result(Blocks.RED_SAND).transformItem(Ingredient.of(Items.POTION))
+			.sound(SoundEvents.BOTTLE_EMPTY).particles(ParticleTypes.SPLASH, 75)
+			.build("transform_red_sand_with_bottle", exporter);
+
+		TransformRecipe.builder()
+			.input(ModBlocks.LOOSE_GRAVEL.get()).result(Blocks.GRAVEL).transformItem(Ingredient.of(Items.POTION))
+			.sound(SoundEvents.BOTTLE_EMPTY).particles(ParticleTypes.SPLASH, 75)
+			.build("transform_gravel_with_bottle", exporter);
 	}
 
 

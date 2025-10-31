@@ -40,6 +40,8 @@ public class LayerItem extends BlockItem {
 		BlockPos pos = context.getClickedPos();
 		ItemStack itemstack = context.getItemInHand();
 
+		if (pos.distToCenterSqr(context.getPlayer().position()) <= 0.5f) { return InteractionResult.FAIL; }
+
 		Terrain.LOGGER.debug(context.getItemInHand().getItem().toString());
 		BlockState existingState = level.getBlockState(pos);
 			if (existingState.getBlock() instanceof FallingLayer && existingState.getBlock() == this.getBlock()) {

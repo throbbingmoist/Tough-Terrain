@@ -13,7 +13,6 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.alchemy.PotionContents;
 import net.minecraft.world.item.alchemy.Potions;
 import net.minecraft.world.item.crafting.*;
 import net.minecraft.world.level.Level;
@@ -26,6 +25,7 @@ import java.util.Optional;
 
 
 public class TransformRecipe implements Recipe<RecipeInput> {
+
 
 	public record ParticleData(ResourceLocation location, Integer count) {}
 	public ParticleData EMPTY = new ParticleData(null, null);
@@ -73,7 +73,7 @@ public class TransformRecipe implements Recipe<RecipeInput> {
 	}
 	public boolean matchesBlock(Level level, BlockPos pos) {return this.inputBlock.map(block -> level.getBlockState(pos).is(block), tag -> level.getBlockState(pos).is(tag));}
 	public boolean matchesItem(ItemStack stack_in_hand) {
-		if (! ( stack_in_hand.getOrDefault(DataComponents.POTION_CONTENTS, PotionContents.EMPTY.withPotion(Potions.WATER)).is(Potions.WATER) ) ) {return false;}
+		if (stack_in_hand.has(DataComponents.POTION_CONTENTS) && !stack_in_hand.get(DataComponents.POTION_CONTENTS).is(Potions.WATER)) {return false;}
 		return transformItem.test(stack_in_hand);
 	}
 
@@ -91,6 +91,8 @@ public class TransformRecipe implements Recipe<RecipeInput> {
 	public Ingredient getTransformItem() {return transformItem;}
 	public boolean hasSoundLocation() { return soundLocation.isPresent(); }
 
+	public BlockState outputBlockState() {return this.getResultState().map(Block::defaultBlockState, state -> state);}
+	public Block outputBlock() {return this.getResultState().map(block -> block, BlockState::getBlock);}
 	public Optional<ResourceLocation> getSoundLocation() { return soundLocation; }
 	public @Nullable SoundEvent getSoundEvent() {return soundLocation.map(BuiltInRegistries.SOUND_EVENT::get).orElse(null);}
 

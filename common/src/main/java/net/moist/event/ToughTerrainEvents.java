@@ -4,29 +4,33 @@ import dev.architectury.event.EventResult;
 import dev.architectury.event.events.common.BlockEvent;
 import dev.architectury.event.events.common.InteractionEvent;
 import net.minecraft.advancements.critereon.ItemPredicate;
-import net.minecraft.client.particle.ParticleEngine;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.*;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundSource;
-import net.minecraft.stats.Stat;
 import net.minecraft.stats.Stats;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.ItemUtils;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.Vec3;
 import net.moist.Terrain;
 import net.moist.block.ModBlocks;
+import net.moist.block.content.ConcretePowderLayer;
 import net.moist.block.content.FallingLayer;
 import net.moist.recipe.LooseningRecipe;
 import net.moist.recipe.ModRecipes;
 import net.moist.recipe.TransformRecipe;
+import net.moist.util.ConcreteHelper;
+import net.moist.util.ConcretePowderHelpers;
 import org.jetbrains.annotations.Nullable;
+import org.joml.Vector3f;
 
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
@@ -70,38 +74,45 @@ public class ToughTerrainEvents {
 			return EventResult.pass();
 		});
 
-		InteractionEvent.RIGHT_CLICK_BLOCK.register(((player, hand, pos, face) -> {
-			AtomicReference<@Nullable Boolean> shouldInterrupt = new AtomicReference<>();
-			Optional<TransformRecipe> recipeOptional = matchTransformRecipe(player.level(), pos, player.getItemInHand(hand));
-			recipeOptional.ifPresent(recipe -> {
-				BlockState initialState = player.level().getBlockState(pos);
-				if (!initialState.hasProperty(FallingLayer.LAYERS) || initialState.getValue(FallingLayer.LAYERS) >= 8) {
-					ItemStack handItem = player.getItemInHand(hand).consumeAndReturn(1, player);
-					if (recipe.hasSoundLocation()) { player.level().playSound(null, pos, recipe.getSoundEvent(), SoundSource.BLOCKS, 1.0f, 0.8f); }
-					if (recipe.getParticleDataOptional().isPresent()) {
-						ServerLevel serverLevel = player.getServer().getLevel(player.level().dimension());
-						ParticleType<?> particleType = BuiltInRegistries.PARTICLE_TYPE.get(recipe.getParticleDataOptional().get().location());
+		InteractionEvent.RIGHT_CLICK_BLOCK.register(((player, hand, pos, face) -> { AtomicReference<@Nullable Boolean> shouldInterrupt = new AtomicReference<>();
+			if (!player.level().isClientSide()) {
+				Level level = player.level();
+				ServerLevel serverLevel = player.getServer().getLevel(level.dimension());
+				Optional<TransformRecipe> recipeOptional = matchTransformRecipe(level, pos, player.getItemInHand(hand));
 
-						if (particleType == ParticleTypes.ITEM) {
-							serverLevel.sendParticles(new ItemParticleOption((ParticleType<ItemParticleOption>) particleType, handItem), pos.getX()+0.5, pos.getY()+0.5, pos.getZ()+0.5, recipe.getParticleData().count(), 0.28, 0.28, 0.28, 0.05);
-						} else if (particleType == ParticleTypes.BLOCK) {
-							BlockState finalState = recipe.getResultState().map(Block::defaultBlockState, state -> state);
-							serverLevel.sendParticles(new BlockParticleOption((ParticleType<BlockParticleOption>) particleType, finalState), pos.getX()+0.5, pos.getY()+0.5, pos.getZ()+0.5, recipe.getParticleData().count(), 0.28, 0.28, 0.28, 0.05);
-						} else if (particleType instanceof ParticleOptions particleOptions) {
-							serverLevel.sendParticles(particleOptions, pos.getX()+0.5, pos.getY()+0.5, pos.getZ()+0.5, recipe.getParticleData().count(), 0.25, 0.25, 0.25, 0.05);
+				recipeOptional.ifPresent(recipe -> {
+					BlockState initialState = level.getBlockState(pos);
+					if (!initialState.hasProperty(FallingLayer.LAYERS) || initialState.getValue(FallingLayer.LAYERS) >= 8) {
+
+						ItemStack handItem = player.getItemInHand(hand);
+						if(!player.hasInfiniteMaterials()) {
+							if (handItem.is(Items.POTION)) {player.setItemInHand(hand, ItemUtils.createFilledResult(handItem, player, new ItemStack(Items.GLASS_BOTTLE)));}
+							else if (handItem.getItem().hasCraftingRemainingItem()) {player.setItemInHand(hand, ItemUtils.createFilledResult(handItem, player, new ItemStack(handItem.getItem().getCraftingRemainingItem())));}
+							handItem.finishUsingItem(level, player);
 						}
-					}
-					recipe.getResultState()
-						.ifLeft(block -> player.level().setBlock(pos, block.defaultBlockState(), 11))
-						.ifRight(blockState -> player.level().setBlock(pos, blockState, 11));
-					recipe.getResultState()
-						.ifLeft(block -> player.awardStat(Stats.ITEM_CRAFTED.get(block.asItem())) )
-						.ifRight(blockState -> player.awardStat(Stats.ITEM_CRAFTED.get(blockState.getBlock().asItem())) );
 
-					shouldInterrupt.set(true);
-				}});
+
+						if (recipe.hasSoundLocation()) {
+							level.playSound(null, pos, recipe.getSoundEvent(), SoundSource.BLOCKS, 1.0f, 0.8f);
+						}
+
+						if (recipe.getParticleDataOptional().isPresent()) {
+							ParticleType<?> particleType = BuiltInRegistries.PARTICLE_TYPE.get(recipe.getParticleDataOptional().get().location());
+							double x = pos.getX() + 0.5; double y = pos.getY() + 0.5; double z =  pos.getZ() + 0.5;float distance = 0.27f;float speed = 0.1f;
+
+							if (particleType == ParticleTypes.ITEM) {serverLevel.sendParticles(new ItemParticleOption((ParticleType<ItemParticleOption>) particleType, handItem), x, y, z, recipe.getParticleData().count(), distance, distance, distance, speed);}
+							else if (particleType == ParticleTypes.BLOCK) {serverLevel.sendParticles(new BlockParticleOption((ParticleType<BlockParticleOption>) particleType, recipe.outputBlockState()), x, y, z, recipe.getParticleData().count(), distance, distance, distance, speed);}
+							else if (particleType == ParticleTypes.DUST) {serverLevel.sendParticles(new DustParticleOptions(ConcreteHelper.getVectorColor(recipe.outputBlock().defaultMapColor()), 1.0f),  x, y, z, recipe.getParticleData().count(), distance, distance, distance, speed);}
+							else if (particleType instanceof ParticleOptions particleOptions) {serverLevel.sendParticles(particleOptions, x, y, z, recipe.getParticleData().count(), distance, distance, distance, speed);}
+						}
+						recipe.getResultState().ifLeft(block -> level.setBlock(pos, block.defaultBlockState(), 11)).ifRight(blockState -> level.setBlock(pos, blockState, 11));
+						recipe.getResultState().ifLeft(block -> player.awardStat(Stats.ITEM_CRAFTED.get(block.asItem()))).ifRight(blockState -> player.awardStat(Stats.ITEM_CRAFTED.get(blockState.getBlock().asItem())));
+
+						shouldInterrupt.set(true);
+					}
+				});
+			}
 			return shouldInterrupt.get() != null ? EventResult.interrupt(shouldInterrupt.get()) : EventResult.pass();
 		}));
-
 	}
 }

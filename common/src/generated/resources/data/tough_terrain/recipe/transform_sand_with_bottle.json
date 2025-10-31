@@ -1,0 +1,17 @@
+{
+  "type": "tough_terrain:world_transform",
+  "input": {
+    "block": "tough_terrain:loose_sand"
+  },
+  "particle": {
+    "count": 75,
+    "particle": "minecraft:splash"
+  },
+  "result": {
+    "block": "minecraft:sand"
+  },
+  "sound": "minecraft:item.bottle.empty",
+  "transformer": {
+    "item": "minecraft:potion"
+  }
+}
