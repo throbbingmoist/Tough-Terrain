@@ -28,8 +28,9 @@ public final class Terrain {
 		ModBlocks.register();
 		ModItems.register();
 
-		ColorHandler.registerBlockColor(ModBlocks.LOOSE_DIRT, ModBlocks.LOOSE_SAND, ModBlocks.LOOSE_RED_SAND, ModBlocks.LOOSE_GRAVEL);
-		ColorHandler.registerGrassColor(ModBlocks.GRASS_LAYER);
+		ColorHandler.registerBlockColor(ModBlocks.LOOSE_DIRT.placedLayer(), ModBlocks.LOOSE_SAND.placedLayer(), ModBlocks.LOOSE_RED_SAND.placedLayer(), ModBlocks.LOOSE_GRAVEL.placedLayer());
+		ColorHandler.registerGrassColor(ModBlocks.GRASS_LAYER.placedLayer());
+		ColorHandler.registerGrassItemColor(ModBlocks.GRASS_LAYER.heldItem(), ModBlocks.GRASS_LAYER.heldSlab(), ModBlocks.GRASS_LAYER.heldBlock());
 
 		ModRecipes.setup();
 

@@ -11,7 +11,7 @@ public final class ModFabricClient implements ClientModInitializer {
 	@Override
 	public void onInitializeClient() {
 		Terrain.LOGGER.info("Putting Block Render types in.");
-		BlockRenderLayerMap.INSTANCE.putBlocks(RenderType.cutout(), ModBlocks.GRASS_LAYER.get(), ModBlocks.MYCELIUM_LAYER.get());
+		BlockRenderLayerMap.INSTANCE.putBlocks(RenderType.cutout(), ModBlocks.GRASS_LAYER.getPlacedLayer(), ModBlocks.MYCELIUM_LAYER.getPlacedLayer());
 	}
 
 	public void putInstance(Block block, RenderType type) {

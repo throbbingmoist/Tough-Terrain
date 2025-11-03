@@ -1,4 +1,4 @@
-package net.moist.recipe;
+package net.moist.recipe.recipes;
 
 
 import com.mojang.datafixers.util.Either;
@@ -19,6 +19,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.moist.Terrain;
+import net.moist.recipe.ModRecipes;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Optional;

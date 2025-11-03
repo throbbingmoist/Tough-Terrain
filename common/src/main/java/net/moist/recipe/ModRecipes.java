@@ -6,6 +6,10 @@ import net.minecraft.core.registries.Registries;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.item.crafting.RecipeType;
 import net.moist.Terrain;
+import net.moist.recipe.recipes.LooseningRecipe;
+import net.moist.recipe.recipes.TransformRecipe;
+import net.moist.recipe.serializers.LooseningSerializer;
+import net.moist.recipe.serializers.TransformSerializer;
 
 public class ModRecipes {
 	public static final DeferredRegister<RecipeType<?>> TYPES = DeferredRegister.create(Terrain.MOD_ID, Registries.RECIPE_TYPE);

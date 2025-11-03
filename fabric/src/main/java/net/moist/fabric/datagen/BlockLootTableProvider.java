@@ -28,23 +28,23 @@ public class BlockLootTableProvider extends FabricBlockLootTableProvider {
 	@Override
 	public void generate() {
 
-		createLayerDropTable(Blocks.GRASS_BLOCK, ModBlocks.LOOSE_DIRT.get(), 8);
-		createLayerDropTable(Blocks.MYCELIUM, ModBlocks.LOOSE_DIRT.get(), 8);
-		createLayerDropTable(Blocks.PODZOL, ModBlocks.LOOSE_DIRT.get(), 8);
+		createLayerDropTable(Blocks.GRASS_BLOCK, ModBlocks.LOOSE_DIRT.getPlacedLayer(), 8);
+		createLayerDropTable(Blocks.MYCELIUM, ModBlocks.LOOSE_DIRT.getPlacedLayer(), 8);
+		createLayerDropTable(Blocks.PODZOL, ModBlocks.LOOSE_DIRT.getPlacedLayer(), 8);
 
-		createLayerDropTable(Blocks.DIRT_PATH, ModBlocks.LOOSE_DIRT.get(), 8);
-		createLayerDropTable(Blocks.COARSE_DIRT, ModBlocks.LOOSE_DIRT.get(), 8);
-		createLayerDropTable(Blocks.FARMLAND, ModBlocks.LOOSE_DIRT.get(), 8);
-		createLayerDropTable(Blocks.COARSE_DIRT, ModBlocks.LOOSE_DIRT.get(), 8);
-		createLayerDropTable(Blocks.ROOTED_DIRT, ModBlocks.LOOSE_DIRT.get(), 8);
+		createLayerDropTable(Blocks.DIRT_PATH, ModBlocks.LOOSE_DIRT.getPlacedLayer(), 8);
+		createLayerDropTable(Blocks.COARSE_DIRT, ModBlocks.LOOSE_DIRT.getPlacedLayer(), 8);
+		createLayerDropTable(Blocks.FARMLAND, ModBlocks.LOOSE_DIRT.getPlacedLayer(), 8);
+		createLayerDropTable(Blocks.COARSE_DIRT, ModBlocks.LOOSE_DIRT.getPlacedLayer(), 8);
+		createLayerDropTable(Blocks.ROOTED_DIRT, ModBlocks.LOOSE_DIRT.getPlacedLayer(), 8);
 
-		createLayerDropTable(Blocks.DIRT, ModBlocks.LOOSE_DIRT.get(), 8);
-		createLayerDropTable(Blocks.SAND, ModBlocks.LOOSE_SAND.get(), 8);
-		createLayerDropTable(Blocks.RED_SAND, ModBlocks.LOOSE_RED_SAND.get(), 8);
-		createLayerDropTable(Blocks.GRAVEL, ModBlocks.LOOSE_GRAVEL.get(), 8);
+		createLayerDropTable(Blocks.DIRT, ModBlocks.LOOSE_DIRT.getPlacedLayer(), 8);
+		createLayerDropTable(Blocks.SAND, ModBlocks.LOOSE_SAND.getPlacedLayer(), 8);
+		createLayerDropTable(Blocks.RED_SAND, ModBlocks.LOOSE_RED_SAND.getPlacedLayer(), 8);
+		createLayerDropTable(Blocks.GRAVEL, ModBlocks.LOOSE_GRAVEL.getPlacedLayer(), 8);
 
-		createLayerTables(FallingLayer.LAYERS, ModBlocks.LOOSE_DIRT, ModBlocks.LOOSE_SAND, ModBlocks.LOOSE_RED_SAND, ModBlocks.LOOSE_GRAVEL);
-		createGrassLayerTables(FallingLayer.LAYERS, ModBlocks.GRASS_LAYER, ModBlocks.MYCELIUM_LAYER);
+		createLayerTables(FallingLayer.LAYERS, ModBlocks.LOOSE_DIRT.placedLayer(), ModBlocks.LOOSE_SAND.placedLayer(), ModBlocks.LOOSE_RED_SAND.placedLayer(), ModBlocks.LOOSE_GRAVEL.placedLayer());
+		createGrassLayerTables(FallingLayer.LAYERS, ModBlocks.GRASS_LAYER.placedLayer(), ModBlocks.MYCELIUM_LAYER.placedLayer());
 		//createLayerTable(ModBlocks.LOOSE_RED_CONCRETE_POWDER, LayerBlock.LAYERS);
 	}
 	@SafeVarargs
@@ -56,7 +56,7 @@ public class BlockLootTableProvider extends FabricBlockLootTableProvider {
 	@SafeVarargs
 	public final void createGrassLayerTables(IntegerProperty LayerProperty, RegistrySupplier<Block>... block) {
 		for (RegistrySupplier<Block> holder : block) {
-			createLayerTable(LayerProperty, holder, ModBlocks.LOOSE_DIRT.get());
+			createLayerTable(LayerProperty, holder, ModBlocks.LOOSE_DIRT.getPlacedLayer());
 		}
 	}
 	public void createLayerTable(IntegerProperty LayerProperty, RegistrySupplier<Block> block) {

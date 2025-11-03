@@ -24,17 +24,18 @@ public class ModelStateProvider extends FabricModelProvider {
 
 	@Override
 	public void generateBlockStateModels(BlockModelGenerators blockStateModelGenerator) {
-		generateLayers(blockStateModelGenerator, ModBlocks.LOOSE_DIRT.get(), Blocks.DIRT, true);
-		generateLayers(blockStateModelGenerator, ModBlocks.LOOSE_SAND.get(), Blocks.SAND, true);
-		generateLayers(blockStateModelGenerator, ModBlocks.LOOSE_RED_SAND.get(), Blocks.RED_SAND, true);
-		generateLayers(blockStateModelGenerator, ModBlocks.LOOSE_GRAVEL.get(), Blocks.GRAVEL, true);
+		generateLayers(blockStateModelGenerator, ModBlocks.LOOSE_DIRT.getPlacedLayer(), Blocks.DIRT, true);
+		generateLayers(blockStateModelGenerator, ModBlocks.LOOSE_SAND.getPlacedLayer(), Blocks.SAND, true);
+		generateLayers(blockStateModelGenerator, ModBlocks.LOOSE_RED_SAND.getPlacedLayer(), Blocks.RED_SAND, true);
+		generateLayers(blockStateModelGenerator, ModBlocks.LOOSE_GRAVEL.getPlacedLayer(), Blocks.GRAVEL, true);
 
 		//generateLayers(blockStateModelGenerator, ModBlocks.LOOSE_RED_CONCRETE_POWDER.get(), Blocks.RED_CONCRETE_POWDER, false, GenericStuff.POWDER);
-		generateGrassLayers(blockStateModelGenerator, ModBlocks.GRASS_LAYER.get(), Blocks.DIRT, Blocks.GRASS_BLOCK, null);
-		generateGrassLikeLayers(blockStateModelGenerator, ModBlocks.MYCELIUM_LAYER.get(), Blocks.DIRT, Blocks.MYCELIUM, null);
+		generateGrassLayers(blockStateModelGenerator, ModBlocks.GRASS_LAYER.getPlacedLayer(), Blocks.DIRT, Blocks.GRASS_BLOCK, null);
+		generateGrassLikeLayers(blockStateModelGenerator, ModBlocks.MYCELIUM_LAYER.getPlacedLayer(), Blocks.DIRT, Blocks.MYCELIUM, null);
 
 	}
 
+	public void generateLayers(BlockModelGenerators blockModelGenerators, Block layeredBlock, Block textureBlock, boolean shouldTint) {generateLayers( blockModelGenerators,  layeredBlock,  textureBlock,  shouldTint, null);}
 	public void generateLayers(BlockModelGenerators blockModelGenerators, Block layeredBlock, Block textureBlock, boolean shouldTint, @Nullable String genericItemName) {
 		String blockName = layeredBlock.asItem().getDescriptionId().replace("block." + Terrain.MOD_ID + ".", "");
 		ModelTemplates.CUBE_ALL.create(layeredBlock, TextureMapping.cube(textureBlock), blockModelGenerators.modelOutput);
@@ -88,9 +89,6 @@ public class ModelStateProvider extends FabricModelProvider {
 			;
 	}
 
-	public void generateLayers(BlockModelGenerators blockModelGenerators, Block layeredBlock, Block textureBlock, boolean shouldTint) {
-		generateLayers( blockModelGenerators,  layeredBlock,  textureBlock,  shouldTint, null);
-	}
 
 	private static void generateLayerModel(BlockModelGenerators blockModelGenerators, Block textureBlock, String blockName, int level, boolean shouldTint) {
 		ResourceLocation generatedModel = ResourceLocation.fromNamespaceAndPath(Terrain.MOD_ID, "block/" + blockName + "_height" + level);

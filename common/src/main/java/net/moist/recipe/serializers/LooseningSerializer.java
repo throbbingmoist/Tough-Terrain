@@ -1,4 +1,4 @@
-package net.moist.recipe;
+package net.moist.recipe.serializers;
 
 import com.mojang.datafixers.util.Either;
 import com.mojang.serialization.Codec;
@@ -12,6 +12,7 @@ import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
+import net.moist.recipe.recipes.LooseningRecipe;
 
 public class LooseningSerializer implements RecipeSerializer<LooseningRecipe> {
 	public static final Codec<Either<Block, TagKey<Block>>> INPUT_CODEC = Codec.either(

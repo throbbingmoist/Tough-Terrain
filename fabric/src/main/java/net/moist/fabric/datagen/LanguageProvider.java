@@ -17,13 +17,13 @@ public class LanguageProvider extends FabricLanguageProvider {
 
 	@Override
 	public void generateTranslations(HolderLookup.Provider registryLookup, TranslationBuilder translationBuilder) {
-		translateLayers(translationBuilder,ModBlocks.LOOSE_DIRT, "Loose Dirt");
-		translateLayers(translationBuilder,ModBlocks.LOOSE_SAND, "Loose Sand");
-		translateLayers(translationBuilder,ModBlocks.LOOSE_RED_SAND, "Loose Red Sand");
-		translateLayers(translationBuilder,ModBlocks.LOOSE_GRAVEL, "Loose Gravel");
+		translateLayers(translationBuilder,ModBlocks.LOOSE_DIRT.placedLayer(), "Loose Dirt");
+		translateLayers(translationBuilder,ModBlocks.LOOSE_SAND.placedLayer(), "Loose Sand");
+		translateLayers(translationBuilder,ModBlocks.LOOSE_RED_SAND.placedLayer(), "Loose Red Sand");
+		translateLayers(translationBuilder,ModBlocks.LOOSE_GRAVEL.placedLayer(), "Loose Gravel");
 
-		translateLayers(translationBuilder,ModBlocks.GRASS_LAYER, "Grass Layer");
-		translateLayers(translationBuilder,ModBlocks.MYCELIUM_LAYER, "Mycelium Layer");
+		translateLayers(translationBuilder,ModBlocks.GRASS_LAYER.placedLayer(), "Grass Layer");
+		translateLayers(translationBuilder,ModBlocks.MYCELIUM_LAYER.placedLayer(), "Mycelium Layer");
 
 		translationBuilder.add(ModCreativeTabs.TOUGH_TERRAIN_TAB.getKey(), "Tough Terrain");
 	}
