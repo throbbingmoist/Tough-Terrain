@@ -63,7 +63,7 @@ public class FloatingLayer extends Block implements SimpleWaterloggedBlock {
 	}
 	@Override protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
 		builder.add(BlockStateProperties.WATERLOGGED).add(LAYERS);
-		//builder.add(SNOWY);
+		builder.add(SNOWY);
 	}
 
 	@Override public @NotNull VoxelShape getShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {return SHAPE_BY_LAYER[state.getValue(LAYERS)];}

@@ -69,7 +69,7 @@ public class SpreadingLayer extends SpreadingSnowyDirtBlock implements SimpleWat
 	}
 	@Override protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
 		builder.add(BlockStateProperties.WATERLOGGED).add(LAYERS);
-		//builder.add(SNOWY);
+		builder.add(SNOWY);
 	}
 
 	@Override

@@ -6,6 +6,36 @@
     "minecraft:mycelium",
     "minecraft:coarse_dirt",
     "minecraft:rooted_dirt",
-    "minecraft:dirt_path"
+    "minecraft:dirt_path",
+    "tough_terrain:grass_layer",
+    "tough_terrain:mycelium_layer",
+    {
+      "id": "terrainslabs:dirt_slab",
+      "required": false
+    },
+    {
+      "id": "terrainslabs:grass_slab",
+      "required": false
+    },
+    {
+      "id": "terrainslabs:podzol_slab",
+      "required": false
+    },
+    {
+      "id": "terrainslabs:mycelium_slab",
+      "required": false
+    },
+    {
+      "id": "terrainslabs:coarse_slab",
+      "required": false
+    },
+    {
+      "id": "terrainslabs:rooted_dirt_slab",
+      "required": false
+    },
+    {
+      "id": "terrainslabs:path_slab",
+      "required": false
+    }
   ]
 }

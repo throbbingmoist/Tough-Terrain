@@ -33,6 +33,9 @@ public class RecipeProvider extends FabricRecipeProvider {
 		createLayerRecipes(exporter, ModBlocks.LOOSE_RED_SAND.placedLayer());
 		createLayerRecipes(exporter, ModBlocks.LOOSE_GRAVEL.placedLayer());
 
+		createLayerRecipes(exporter, ModBlocks.GRASS_LAYER.placedLayer());
+		createLayerRecipes(exporter, ModBlocks.MYCELIUM_LAYER.placedLayer());
+
 
 		SimpleCookingRecipeBuilder
 			.smelting(Ingredient.of(ModItems.ITEMS.getRegistrar().get(Terrain.getID("loose_sand_block")), ModItems.ITEMS.getRegistrar().get(Terrain.getID("loose_red_sand_block"))), RecipeCategory.BUILDING_BLOCKS, Blocks.GLASS, 0.1f, 200)

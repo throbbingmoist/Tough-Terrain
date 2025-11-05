@@ -56,7 +56,7 @@ public class BlockLootTableProvider extends FabricBlockLootTableProvider {
 	@SafeVarargs
 	public final void createGrassLayerTables(IntegerProperty LayerProperty, RegistrySupplier<Block>... block) {
 		for (RegistrySupplier<Block> holder : block) {
-			createLayerTable(LayerProperty, holder, ModBlocks.LOOSE_DIRT.getPlacedLayer());
+			createLayerTableForSilk(LayerProperty, holder, holder.get(), ModBlocks.LOOSE_DIRT.getPlacedLayer());
 		}
 	}
 	public void createLayerTable(IntegerProperty LayerProperty, RegistrySupplier<Block> block) {
@@ -71,6 +71,30 @@ public class BlockLootTableProvider extends FabricBlockLootTableProvider {
 					.apply(SetItemCountFunction.setCount(ConstantValue.exactly(layers)))
 					.when(LootItemBlockStatePropertyCondition.hasBlockStateProperties(block.get())
 						.setProperties(StatePropertiesPredicate.Builder.properties().hasProperty(LayerProperty, layers)))
+				)
+			);
+		}
+		add(block.get(), builder);
+	}
+	public void createLayerTableForSilk(IntegerProperty LayerProperty, RegistrySupplier<Block> block, ItemLike ToDropWithSilk, ItemLike ToDropWithoutSilk) {
+		LootTable.Builder builder = LootTable.lootTable();
+		for (Integer layers : LayerProperty.getPossibleValues()) {
+			builder.withPool(LootPool.lootPool()
+				.setRolls(ConstantValue.exactly(1.0F))
+				.add(LootItem.lootTableItem(ToDropWithoutSilk)
+					.apply(SetItemCountFunction.setCount(ConstantValue.exactly(layers)))
+					.when(LootItemBlockStatePropertyCondition.hasBlockStateProperties(block.get())
+						.setProperties(StatePropertiesPredicate.Builder.properties().hasProperty(LayerProperty, layers)))
+					.when(this.doesNotHaveSilkTouch())
+				)
+			);
+			builder.withPool(LootPool.lootPool()
+				.setRolls(ConstantValue.exactly(1.0F))
+				.add(LootItem.lootTableItem(ToDropWithSilk)
+					.apply(SetItemCountFunction.setCount(ConstantValue.exactly(layers)))
+					.when(LootItemBlockStatePropertyCondition.hasBlockStateProperties(block.get())
+						.setProperties(StatePropertiesPredicate.Builder.properties().hasProperty(LayerProperty, layers)))
+					.when(this.hasSilkTouch())
 				)
 			);
 		}

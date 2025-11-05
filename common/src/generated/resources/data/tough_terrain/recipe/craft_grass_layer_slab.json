@@ -1,0 +1,22 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    {
+      "item": "tough_terrain:grass_layer"
+    },
+    {
+      "item": "tough_terrain:grass_layer"
+    },
+    {
+      "item": "tough_terrain:grass_layer"
+    },
+    {
+      "item": "tough_terrain:grass_layer"
+    }
+  ],
+  "result": {
+    "count": 1,
+    "id": "tough_terrain:grass_layer_slab"
+  }
+}

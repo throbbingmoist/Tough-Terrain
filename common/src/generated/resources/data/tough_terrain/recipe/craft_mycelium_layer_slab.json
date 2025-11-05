@@ -1,0 +1,22 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    {
+      "item": "tough_terrain:mycelium_layer"
+    },
+    {
+      "item": "tough_terrain:mycelium_layer"
+    },
+    {
+      "item": "tough_terrain:mycelium_layer"
+    },
+    {
+      "item": "tough_terrain:mycelium_layer"
+    }
+  ],
+  "result": {
+    "count": 1,
+    "id": "tough_terrain:mycelium_layer_slab"
+  }
+}
