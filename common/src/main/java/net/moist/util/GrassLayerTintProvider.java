@@ -9,6 +9,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.BlockAndTintGetter;
 import net.minecraft.world.level.GrassColor;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.material.MapColor;
 import net.moist.Terrain;
 import net.moist.item.content.LayerItem;
@@ -24,6 +25,9 @@ public class GrassLayerTintProvider {
 			if (tintIndex == 0) {
 				if (blockAndTintGetter != null || blockPos != null) {
 					color = blockAndTintGetter.getBlockTint(blockPos, BiomeColors.GRASS_COLOR_RESOLVER);
+					if (blockState.hasProperty(BlockStateProperties.SNOWY) && blockState.getValue(BlockStateProperties.SNOWY)) {
+						return 0xffffff;
+					}
 					return color;
 				} else {
 					color = GrassColor.get(0.5, 1.0);

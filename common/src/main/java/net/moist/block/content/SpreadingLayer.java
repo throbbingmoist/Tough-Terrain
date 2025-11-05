@@ -60,7 +60,7 @@ public class SpreadingLayer extends SpreadingSnowyDirtBlock implements SimpleWat
 		this.overgrowable = overgrowable;
 		this.registerDefaultState(this.stateDefinition.any().setValue(LAYERS, 1)
 			.setValue(BlockStateProperties.WATERLOGGED, false)
-			//.setValue(BlockStateProperties.SNOWY, false)
+			.setValue(BlockStateProperties.SNOWY, false)
 		);
 	}
 
