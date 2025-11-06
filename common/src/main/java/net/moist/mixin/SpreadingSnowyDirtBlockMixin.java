@@ -28,7 +28,6 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(SpreadingSnowyDirtBlock.class)
 public abstract class SpreadingSnowyDirtBlockMixin extends SnowyDirtBlock {
-	private int FORSIZE = 4; // remember to set to 4
 
 	@Shadow private static boolean canBeGrass(BlockState blockState, LevelReader levelReader, BlockPos blockPos) {
 		BlockPos blockPos2 = blockPos.above();
@@ -73,7 +72,7 @@ public abstract class SpreadingSnowyDirtBlockMixin extends SnowyDirtBlock {
 	}
 
 
-	@Inject(method = "randomTick", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/block/state/BlockState;is(Lnet/minecraft/world/level/block/Block;)Z"), cancellable = true)
+	@Inject(method = "randomTick", at = @At(value = "HEAD"), cancellable = true)
 	private void randomTick(BlockState state, ServerLevel level, BlockPos pos, RandomSource random, CallbackInfo ci) {
 		if (!terrain$canBeGrass(state, level, pos)) {
 			Terrain.LOGGER.info(state.hasProperty(FallingLayer.LAYERS)+" if we have layers");
@@ -86,6 +85,8 @@ public abstract class SpreadingSnowyDirtBlockMixin extends SnowyDirtBlock {
 			}
 		} else if (level.getMaxLocalRawBrightness(pos.above()) >= 9) {
 			BlockState origin_state = this.defaultBlockState();
+			// remember to set to 4
+			int FORSIZE = 4;
 			for(int i = 0; i < FORSIZE; ++i) {
 				BlockPos target_pos = pos.offset(random.nextInt(3) - 1, random.nextInt(5) - 3, random.nextInt(3) - 1);
 				BlockState target_state = level.getBlockState(target_pos);

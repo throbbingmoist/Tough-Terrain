@@ -2,11 +2,12 @@
   "required": true,
   "package": "net.moist.mixin",
   "compatibilityLevel": "JAVA_21",
-  "minVersion": "0.8",
-  "refmap": "tough-terrain-common-refmap.json",
+  "minVersion": "0.8.7",
   "client": [
-    "BlockModelRenderMixin"
+    "BlockModelRenderMixin",
+    "LevelMixin"
   ],
+  "priority": 500,
   "mixins": [
     "BlockMixin",
     "FallingBlockEntityMixin",

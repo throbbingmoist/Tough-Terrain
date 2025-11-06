@@ -45,6 +45,7 @@ public abstract class FallingBlockEntityMixin extends Entity {
 		BlockState fallingBlockState = this.getBlockState();
 		BlockState existingState = level.getBlockState(currentPos);
 
+
 		//Terrain.LOGGER.info("SPEED: " + entity.getDeltaMovement().y() + ", AT "+ entity.position() +" ||| RESULT:" + blockHitResult.getType().toString() + " on "+ existingState +" at " + detectionCoords + "(offset "+offset+" down) at age " + this.time);
 		// we use a velocity check to determine if the block is about to land
 		if (entity.getDeltaMovement().y() <= 0 && !level.isClientSide && fallingBlockState.hasProperty(FallingLayer.LAYERS)) {

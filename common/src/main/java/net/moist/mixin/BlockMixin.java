@@ -16,8 +16,8 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(Block.class)
 public abstract class BlockMixin {
-	@Inject(method = "shouldRenderFace", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/BlockGetter;getBlockState(Lnet/minecraft/core/BlockPos;)Lnet/minecraft/world/level/block/state/BlockState;"), cancellable = true)
-	private static void tough_terrain$shouldRenderFace(BlockState blockState, BlockGetter blockGetter, BlockPos blockPos, Direction direction, BlockPos neighborPos, CallbackInfoReturnable<Boolean> cir) {
+	@Inject(method = "shouldRenderFace", at = @At(value = "HEAD"), cancellable = true)
+	private static void tough_terrain$shouldRenderFace(BlockState blockState, BlockGetter blockGetter, BlockPos blockPos, Direction direction, BlockPos blockPos2, CallbackInfoReturnable<Boolean> cir) {
 		if (blockState.is(Blocks.SNOW)) {
 			BlockState stateBelowSnow = blockGetter.getBlockState(blockPos.below());
 			if (stateBelowSnow.hasProperty(FallingLayer.LAYERS)) {

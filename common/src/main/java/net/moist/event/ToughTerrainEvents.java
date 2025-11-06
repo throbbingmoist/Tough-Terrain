@@ -1,6 +1,8 @@
 package net.moist.event;
 
 import dev.architectury.event.EventResult;
+import dev.architectury.event.events.client.ClientPlayerEvent;
+import dev.architectury.event.events.client.ClientTickEvent;
 import dev.architectury.event.events.common.BlockEvent;
 import dev.architectury.event.events.common.InteractionEvent;
 import dev.architectury.event.events.common.PlayerEvent;
@@ -81,6 +83,8 @@ public class ToughTerrainEvents {
 			}
 			return EventResult.pass();
 		});
+
+
 
 		InteractionEvent.RIGHT_CLICK_BLOCK.register(((player, hand, pos, face) -> { AtomicReference<@Nullable Boolean> shouldInterrupt = new AtomicReference<>();
 			if (!player.level().isClientSide()) {
