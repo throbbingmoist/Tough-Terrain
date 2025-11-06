@@ -3,6 +3,7 @@ package net.moist.event;
 import dev.architectury.event.EventResult;
 import dev.architectury.event.events.common.BlockEvent;
 import dev.architectury.event.events.common.InteractionEvent;
+import dev.architectury.event.events.common.PlayerEvent;
 import net.minecraft.advancements.critereon.ItemPredicate;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.*;
@@ -12,12 +13,14 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.stats.Stats;
 import net.minecraft.tags.TagKey;
+import net.minecraft.world.InteractionHand;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.ItemUtils;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.moist.Terrain;
 import net.moist.block.ModBlocks;
@@ -60,6 +63,15 @@ public class ToughTerrainEvents {
 
 	public static void subscribe() {
 		BlockEvent.BREAK.register((level, blockPos, state, player, xp) -> {
+			if (state.hasProperty(FallingLayer.LAYERS)) {
+				if (level.getBlockState(blockPos.above()).is(Blocks.SNOW)) {
+					level.getBlockState(blockPos.above()).getBlock().playerDestroy(level, player, blockPos, level.getBlockState(blockPos.above()), level.getBlockEntity(blockPos.above()), player.getMainHandItem().copy());
+					level.setBlock(blockPos.above(), Blocks.AIR.defaultBlockState(), 11);
+					if (!level.getBlockState(blockPos.above()).is(Blocks.SNOW)) {
+						return EventResult.interruptFalse();
+					}
+				}
+			}
 			if (!player.isHolding(ItemPredicate.Builder.item().of(SHOVELS_THAT_PACK).build())) {getAdjacent(blockPos).forEach((key, targetPos) -> {
 					if (level.getBlockState(blockPos).is(ModBlocks.LOOSENS_SURROUNDINGS)) {
 						Optional<LooseningRecipe> recipeOptional = matchLoosenRecipe(level, targetPos);

@@ -27,10 +27,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 @Mixin(FallingBlockEntity.class)
 public abstract class FallingBlockEntityMixin extends Entity {
 	@Shadow public abstract BlockState getBlockState();
-
 	@Shadow private BlockState blockState;
-
-	@Shadow public int time;
 
 	public FallingBlockEntityMixin() {
 		super(null, null); // Dummy constructor for mixin
@@ -49,7 +46,6 @@ public abstract class FallingBlockEntityMixin extends Entity {
 		BlockState existingState = level.getBlockState(currentPos);
 
 		//Terrain.LOGGER.info("SPEED: " + entity.getDeltaMovement().y() + ", AT "+ entity.position() +" ||| RESULT:" + blockHitResult.getType().toString() + " on "+ existingState +" at " + detectionCoords + "(offset "+offset+" down) at age " + this.time);
-
 		// we use a velocity check to determine if the block is about to land
 		if (entity.getDeltaMovement().y() <= 0 && !level.isClientSide && fallingBlockState.hasProperty(FallingLayer.LAYERS)) {
 //			if (blockHitResult.getType() != HitResult.Type.MISS) {
@@ -63,7 +59,7 @@ public abstract class FallingBlockEntityMixin extends Entity {
 				int fallingLayers = fallingBlockState.getValue(FallingLayer.LAYERS);
 				int totalLayers = currentLayers + fallingLayers;
 
-				if (totalLayers <= FallingLayer.MAX_LAYERS) { // this just straight up calculates if
+				if (totalLayers <= FallingLayer.MAX_LAYERS) { // this just straight up calculates if it's overflow time
 					BlockState newState = existingState.setValue(FallingLayer.LAYERS, totalLayers);
 					level.setBlock(currentPos, newState, 11);
 					level.playSound(null, currentPos, this.blockState.getSoundType().getPlaceSound(), SoundSource.BLOCKS, 1f, 0.2f);

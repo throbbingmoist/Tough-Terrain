@@ -1,0 +1,10 @@
+{
+  "values": [
+    "tough_terrain:loose_dirt",
+    "tough_terrain:loose_red_sand",
+    "tough_terrain:loose_sand",
+    "tough_terrain:loose_gravel",
+    "tough_terrain:grass_layer",
+    "tough_terrain:mycelium_layer"
+  ]
+}

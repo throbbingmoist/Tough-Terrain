@@ -5,10 +5,15 @@ import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.tags.FluidTags;
 import net.minecraft.util.RandomSource;
+import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.block.*;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.lighting.LightEngine;
+import net.minecraft.world.phys.shapes.CollisionContext;
+import net.minecraft.world.phys.shapes.VoxelShape;
+import net.moist.Terrain;
 import net.moist.block.ModBlocks;
 import net.moist.block.content.FallingLayer;
 import net.moist.block.content.SpreadingLayer;
@@ -18,18 +23,20 @@ import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 
 @Mixin(SpreadingSnowyDirtBlock.class)
 public abstract class SpreadingSnowyDirtBlockMixin extends SnowyDirtBlock {
 	private int FORSIZE = 4; // remember to set to 4
 
-
 	@Shadow private static boolean canBeGrass(BlockState blockState, LevelReader levelReader, BlockPos blockPos) {
 		BlockPos blockPos2 = blockPos.above();
 		BlockState blockState2 = levelReader.getBlockState(blockPos2);
 		if (blockState2.is(Blocks.SNOW) && (Integer)blockState2.getValue(SnowLayerBlock.LAYERS) == 1) {
 			return true;
+		} else if (blockState2.is(Blocks.SNOW) && (Integer)blockState2.getValue(SnowLayerBlock.LAYERS) > 2) {
+			return false;
 		} else if (blockState2.getFluidState().getAmount() == 8) {
 			return false;
 		} else if (!(blockState2.getBlock() instanceof FallingLayer) && !(blockState2.getBlock() instanceof SpreadingLayer)) {
@@ -69,8 +76,14 @@ public abstract class SpreadingSnowyDirtBlockMixin extends SnowyDirtBlock {
 	@Inject(method = "randomTick", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/block/state/BlockState;is(Lnet/minecraft/world/level/block/Block;)Z"), cancellable = true)
 	private void randomTick(BlockState state, ServerLevel level, BlockPos pos, RandomSource random, CallbackInfo ci) {
 		if (!terrain$canBeGrass(state, level, pos)) {
-			level.setBlockAndUpdate(pos, Blocks.DIRT.defaultBlockState());
-			ci.cancel();
+			Terrain.LOGGER.info(state.hasProperty(FallingLayer.LAYERS)+" if we have layers");
+			if (state.hasProperty(FallingLayer.LAYERS)) {
+				level.setBlockAndUpdate(pos, ModBlocks.LOOSE_DIRT.getPlacedLayer().defaultBlockState().setValue(FallingLayer.LAYERS,state.getValue(FallingLayer.LAYERS).intValue()));
+				ci.cancel();
+			} else {
+				level.setBlockAndUpdate(pos, Blocks.DIRT.defaultBlockState());
+				ci.cancel();
+			}
 		} else if (level.getMaxLocalRawBrightness(pos.above()) >= 9) {
 			BlockState origin_state = this.defaultBlockState();
 			for(int i = 0; i < FORSIZE; ++i) {

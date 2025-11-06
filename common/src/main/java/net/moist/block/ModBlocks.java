@@ -24,6 +24,7 @@ public class ModBlocks {
 	public static final LayerBlockSet LOOSE_GRAVEL = LayerBlockSet.layerSet(LayerBuilder.falling().named("loose_gravel").withTab(ModCreativeTabs.TOUGH_TERRAIN_TAB).basedOn(Blocks.GRAVEL));
 
 	public static final LayerBlockSet GRASS_LAYER = LayerBlockSet.layerSet(LayerBuilder.spreading().named("grass_layer").withTab(ModCreativeTabs.TOUGH_TERRAIN_TAB).basedOn(Blocks.GRASS_BLOCK));
+	public static final LayerBlockSet DIRT_LAYER = LayerBlockSet.layerSet(LayerBuilder.spreading().named("dirt_layer").withTab(ModCreativeTabs.TOUGH_TERRAIN_TAB).basedOn(Blocks.DIRT));
 	public static final LayerBlockSet MYCELIUM_LAYER = LayerBlockSet.layerSet(LayerBuilder.spreading().named("mycelium_layer").withTab(ModCreativeTabs.TOUGH_TERRAIN_TAB).basedOn(Blocks.MYCELIUM));
 
 	public static boolean IsLayerOvergrowable(BlockState state) {

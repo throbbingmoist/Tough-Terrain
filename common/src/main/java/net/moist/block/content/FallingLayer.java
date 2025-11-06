@@ -8,12 +8,15 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.tags.FluidTags;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.item.FallingBlockEntity;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.block.*;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
@@ -21,12 +24,15 @@ import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.IntegerProperty;
 import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.level.material.Fluids;
+import net.minecraft.world.phys.shapes.BooleanOp;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
-import net.moist.Terrain;
 import net.moist.item.content.LayerItem;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import javax.swing.text.html.BlockView;
 
 public class FallingLayer extends FallingBlock implements SimpleWaterloggedBlock {
 	public static final IntegerProperty LAYERS = IntegerProperty.create("layers", 1, 8);
@@ -44,19 +50,6 @@ public class FallingLayer extends FallingBlock implements SimpleWaterloggedBlock
 		return CODEC;
 	}
 	// ----------------------------
-
-	protected static final VoxelShape[] SHAPE_BY_LAYER = new VoxelShape[]{
-		Shapes.empty(),
-		Block.box(0.0D, 0.0D, 0.0D, 16.0D, 2.0D, 16.0D),
-		Block.box(0.0D, 0.0D, 0.0D, 16.0D, 4.0D, 16.0D),
-		Block.box(0.0D, 0.0D, 0.0D, 16.0D, 6.0D, 16.0D),
-		Block.box(0.0D, 0.0D, 0.0D, 16.0D, 8.0D, 16.0D),
-		Block.box(0.0D, 0.0D, 0.0D, 16.0D, 10.0D, 16.0D),
-		Block.box(0.0D, 0.0D, 0.0D, 16.0D, 12.0D, 16.0D),
-		Block.box(0.0D, 0.0D, 0.0D, 16.0D, 14.0D, 16.0D),
-		Block.box(0.0D, 0.0D, 0.0D, 16.0D, 16.0D, 16.0D)
-	};
-
 
 	public FallingLayer(BlockBehaviour.Properties properties) {
 		super(properties.randomTicks());
@@ -79,9 +72,28 @@ public class FallingLayer extends FallingBlock implements SimpleWaterloggedBlock
 		builder.add(BlockStateProperties.WATERLOGGED).add(LAYERS);
 	}
 
-	@Override
-	public VoxelShape getShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
-		return SHAPE_BY_LAYER[state.getValue(LAYERS)];
+
+	@Override public @NotNull VoxelShape getShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
+		BlockState aboveState = level.getBlockState(pos.above());
+		double snowBoost = aboveState.is(Blocks.SNOW) ? aboveState.getValue(BlockStateProperties.LAYERS) : 0.0D;
+		double offset = state.getValue(LAYERS)*2.0D;
+		VoxelShape layerShape = Shapes.box(0.0D, 0.0D, 0.0D, 16.0D/16f, offset/16f, 16.0D/16f);
+		VoxelShape snowShape = Shapes.box(0.0D, offset/16f, 0.0D, 16.0D/16f, (offset+snowBoost*2.0D)/16f, 16.0D/16f);
+		if (snowBoost == 0.0) {
+			return layerShape;
+		}
+		return Shapes.joinUnoptimized(layerShape, snowShape, BooleanOp.OR);
+	}
+	@Override public @NotNull VoxelShape getCollisionShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
+		BlockState aboveState = level.getBlockState(pos.above());
+		double snowBoost = aboveState.is(Blocks.SNOW) ? aboveState.getValue(BlockStateProperties.LAYERS) : 0.0D;
+		double offset = state.getValue(LAYERS)*2.0D;
+		VoxelShape layerShape = Shapes.box(0.0D, 0.0D, 0.0D, 16.0D/16f, offset/16f, 16.0D/16f);
+		VoxelShape snowShape = Shapes.box(0.0D, offset/16f, 0.0D, 16.0D/16f, (offset+snowBoost*2.0D)/16f, 16.0D/16f);
+		if (snowBoost == 0.0) {
+			return layerShape;
+		}
+		return Shapes.joinUnoptimized(layerShape, snowShape, BooleanOp.OR);
 	}
 
 	@Override public boolean canBeReplaced(BlockState state, BlockPlaceContext context) {return context.getItemInHand().getItem() instanceof LayerItem && ((LayerItem) context.getItemInHand().getItem()).getBlock().equals(this) && state.getValue(LAYERS) < MAX_LAYERS;}
@@ -91,6 +103,14 @@ public class FallingLayer extends FallingBlock implements SimpleWaterloggedBlock
 	}
 
 	@Override public BlockState getStateForPlacement(BlockPlaceContext context) {return super.getStateForPlacement(context);}
+
+	@Override public void playerDestroy(Level level, Player player, BlockPos blockPos, BlockState blockState, @Nullable BlockEntity blockEntity, ItemStack itemStack) {
+		if (level.getBlockState(blockPos.above()).is(Blocks.SNOW)) {
+			level.getBlockState(blockPos.above()).getBlock().playerDestroy(level, player, blockPos.above(), level.getBlockState(blockPos.above()), level.getBlockEntity(blockPos.above()), itemStack);
+		} else {
+			super.playerDestroy(level, player, blockPos, blockState, blockEntity, itemStack);
+		}
+	}
 
 	@Override public void onPlace(BlockState state, Level level, BlockPos pos, BlockState oldState, boolean isMoving) {level.scheduleTick(pos, this, 2);}
 
@@ -116,7 +136,10 @@ public class FallingLayer extends FallingBlock implements SimpleWaterloggedBlock
 
 	public boolean supported(BlockState state, LevelReader level, BlockPos pos) {
 		BlockState blockStateBelow = level.getBlockState(pos.below());
-		return blockStateBelow.isFaceSturdy(level, pos.below(), Direction.UP) && (!(blockStateBelow.hasProperty(LAYERS)) || !(blockStateBelow.getValue(LAYERS) < 8));
+		if (blockStateBelow.hasProperty(LAYERS) && blockStateBelow.getValue(LAYERS) == 8) {
+			return true;
+		}
+		return blockStateBelow.isFaceSturdy(level, pos.below(), Direction.UP);
 	}
 
 	@Override public BlockState updateShape(BlockState state, Direction direction, BlockState neighborState, LevelAccessor level, BlockPos currentPos, BlockPos neighborPos) {

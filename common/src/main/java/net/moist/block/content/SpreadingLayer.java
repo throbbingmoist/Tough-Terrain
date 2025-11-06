@@ -5,11 +5,14 @@ import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.RandomSource;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.block.*;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
@@ -23,6 +26,7 @@ import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import net.moist.item.content.LayerItem;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public class SpreadingLayer extends SpreadingSnowyDirtBlock implements SimpleWaterloggedBlock {
 	public static final IntegerProperty LAYERS = FallingLayer.LAYERS;
@@ -40,19 +44,6 @@ public class SpreadingLayer extends SpreadingSnowyDirtBlock implements SimpleWat
 	protected @NotNull MapCodec<? extends SpreadingSnowyDirtBlock> codec() {
 		return CODEC;
 	}
-
-	protected static final VoxelShape[] SHAPE_BY_LAYER = new VoxelShape[]{
-		Shapes.empty(),
-		Block.box(0.0D, 0.0D, 0.0D, 16.0D, 2.0D, 16.0D),
-		Block.box(0.0D, 0.0D, 0.0D, 16.0D, 4.0D, 16.0D),
-		Block.box(0.0D, 0.0D, 0.0D, 16.0D, 6.0D, 16.0D),
-		Block.box(0.0D, 0.0D, 0.0D, 16.0D, 8.0D, 16.0D),
-		Block.box(0.0D, 0.0D, 0.0D, 16.0D, 10.0D, 16.0D),
-		Block.box(0.0D, 0.0D, 0.0D, 16.0D, 12.0D, 16.0D),
-		Block.box(0.0D, 0.0D, 0.0D, 16.0D, 14.0D, 16.0D),
-		Block.box(0.0D, 0.0D, 0.0D, 16.0D, 16.0D, 16.0D)
-	};
-
 
 	public SpreadingLayer(BlockBehaviour.Properties properties) {this(properties, false);}
 	public SpreadingLayer(BlockBehaviour.Properties properties, boolean overgrowable) {
@@ -72,9 +63,19 @@ public class SpreadingLayer extends SpreadingSnowyDirtBlock implements SimpleWat
 		builder.add(SNOWY);
 	}
 
-	@Override
-	public @NotNull VoxelShape getShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
-		return SHAPE_BY_LAYER[state.getValue(LAYERS)];
+	@Override public void playerDestroy(Level level, Player player, BlockPos blockPos, BlockState blockState, @Nullable BlockEntity blockEntity, ItemStack itemStack) {
+		if (level.getBlockState(blockPos.above()).is(Blocks.SNOW)) {
+			level.getBlockState(blockPos.above()).getBlock().playerDestroy(level, player, blockPos.above(), level.getBlockState(blockPos.above()), level.getBlockEntity(blockPos.above()), itemStack);
+			return;
+		} else {
+			super.playerDestroy(level, player, blockPos, blockState, blockEntity, itemStack);
+		}
+	}
+
+	@Override public @NotNull VoxelShape getShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
+		BlockState aboveState = level.getBlockState(pos.above());
+		double snowBoost = aboveState.is(Blocks.SNOW) ? aboveState.getValue(BlockStateProperties.LAYERS) : 0.0D;
+		return Block.box(0.0D, 0.0D, 0.0D, 16.0D, state.getValue(LAYERS)*2.0D, 16.0D);
 	}
 
 	@Override public boolean canBeReplaced(BlockState state, BlockPlaceContext context) {return context.getItemInHand().getItem() instanceof LayerItem && ((LayerItem) context.getItemInHand().getItem()).getBlock().equals(this) && state.getValue(LAYERS) < MAX_LAYERS;}
