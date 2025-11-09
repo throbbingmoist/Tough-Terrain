@@ -25,7 +25,8 @@
     ]
   },
   "mixins": [
-    "tough_terrain.mixins.json"
+    "tough_terrain.mixins.json",
+    "tough_terrain.fabric.mixins.json"
   ],
 
   "depends": {

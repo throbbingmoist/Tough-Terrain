@@ -12,6 +12,7 @@ sourceSets {
 }
 
 loom {
+    accessWidenerPath = file("src/main/resources/tough_terrain.accesswidener")
     mixin {
         defaultRefmapName.set("tough-terrain.mixins.refmap.json")
     }

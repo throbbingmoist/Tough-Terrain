@@ -1,0 +1,16 @@
+{
+  "required": true,
+  "package": "net.moist.neoforge.mixin",
+  "compatibilityLevel": "JAVA_21",
+  "minVersion": "0.8.7",
+  "client": [
+    "BlockModelRenderMixin",
+    "LevelMixin"
+  ],
+  "priority": 1001,
+  "mixins": [
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}

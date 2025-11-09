@@ -2,6 +2,7 @@ package net.moist.block.content;
 
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
+import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.RandomSource;
@@ -21,12 +22,15 @@ import net.minecraft.world.level.block.state.properties.BooleanProperty;
 import net.minecraft.world.level.block.state.properties.IntegerProperty;
 import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.level.material.Fluids;
+import net.minecraft.world.phys.shapes.BooleanOp;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import net.moist.item.content.LayerItem;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import static net.moist.Terrain.getLookGranular;
 
 public class SpreadingLayer extends SpreadingSnowyDirtBlock implements SimpleWaterloggedBlock {
 	public static final IntegerProperty LAYERS = FallingLayer.LAYERS;
@@ -63,32 +67,49 @@ public class SpreadingLayer extends SpreadingSnowyDirtBlock implements SimpleWat
 		builder.add(SNOWY);
 	}
 
-	@Override public void playerDestroy(Level level, Player player, BlockPos blockPos, BlockState blockState, @Nullable BlockEntity blockEntity, ItemStack itemStack) {
-		if (level.getBlockState(blockPos.above()).is(Blocks.SNOW)) {
-			level.getBlockState(blockPos.above()).getBlock().playerDestroy(level, player, blockPos.above(), level.getBlockState(blockPos.above()), level.getBlockEntity(blockPos.above()), itemStack);
-			return;
-		} else {
-			super.playerDestroy(level, player, blockPos, blockState, blockEntity, itemStack);
-		}
-	}
-
 	@Override public @NotNull VoxelShape getShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
 		BlockState aboveState = level.getBlockState(pos.above());
 		double snowBoost = aboveState.is(Blocks.SNOW) ? aboveState.getValue(BlockStateProperties.LAYERS) : 0.0D;
-		return Block.box(0.0D, 0.0D, 0.0D, 16.0D, state.getValue(LAYERS)*2.0D, 16.0D);
+		double offset = state.getValue(LAYERS)*2.0D;
+		VoxelShape layerShape = Shapes.box(0.0D, 0.0D, 0.0D, 16.0D/16f, offset/16f, 16.0D/16f);
+		VoxelShape snowShape = Shapes.box(0.0D, offset/16f, 0.0D, 16.0D/16f, (offset+snowBoost*2.0D)/16f, 16.0D/16f);
+		if ((snowBoost == 0.0) || !(getLookGranular(Minecraft.getInstance().hitResult) >= state.getValue(FallingLayer.LAYERS)/8f)) {
+			return layerShape;
+		}
+		return Shapes.join(layerShape, snowShape, BooleanOp.OR);
+	}
+	@Override public @NotNull VoxelShape getCollisionShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
+		BlockState aboveState = level.getBlockState(pos.above());
+		double snowBoost = aboveState.is(Blocks.SNOW) ? aboveState.getValue(BlockStateProperties.LAYERS)-1 : 0.0D;
+		double offset = state.getValue(LAYERS)*2.0D;
+		VoxelShape layerShape = Shapes.box(0.0D, 0.0D, 0.0D, 16.0D/16f, offset/16f, 16.0D/16f);
+		VoxelShape snowShape = Shapes.box(0.0D, offset/16f, 0.0D, 16.0D/16f, (offset+snowBoost*2.0D)/16f, 16.0D/16f);
+		return layerShape;
+	}
+	@Override public @NotNull VoxelShape getVisualShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
+		BlockState aboveState = level.getBlockState(pos.above());
+		double snowBoost = aboveState.is(Blocks.SNOW) ? aboveState.getValue(BlockStateProperties.LAYERS) : 0.0D;
+		double offset = state.getValue(LAYERS)*2.0D;
+		VoxelShape layerShape = Shapes.box(0.0D, 0.0D, 0.0D, 16.0D/16f, offset/16f, 16.0D/16f);
+		VoxelShape snowShape = Shapes.box(0.0D, offset/16f, 0.0D, 16.0D/16f, (offset+snowBoost*2.0D)/16f, 16.0D/16f);
+		if ((snowBoost == 0.0) || !(getLookGranular(Minecraft.getInstance().hitResult) >= state.getValue(FallingLayer.LAYERS)/8f)) {
+			return layerShape;
+		}
+		return Shapes.join(layerShape, snowShape, BooleanOp.OR);
 	}
 
 	@Override public boolean canBeReplaced(BlockState state, BlockPlaceContext context) {return context.getItemInHand().getItem() instanceof LayerItem && ((LayerItem) context.getItemInHand().getItem()).getBlock().equals(this) && state.getValue(LAYERS) < MAX_LAYERS;}
 	@Override public BlockState getStateForPlacement(BlockPlaceContext context) {return super.getStateForPlacement(context);}
 
 	@Override public void onPlace(BlockState state, Level level, BlockPos pos, BlockState oldState, boolean isMoving) {level.scheduleTick(pos, this, 2);}
-	@Override public void neighborChanged(BlockState state, Level level, BlockPos pos, Block changedBlock, BlockPos changedPos, boolean isMoving) {level.scheduleTick(pos, this, 2);}
+	@Override public void neighborChanged(BlockState state, Level level, BlockPos pos, Block changedBlock, BlockPos changedPos, boolean isMoving) {state.setValue(SNOWY, level.getBlockState(pos.above()).is(Blocks.SNOW));level.scheduleTick(pos, this, 2);}
 	public boolean overgrowable() {return this.overgrowable;}
 
 	@Override protected void randomTick(BlockState state, ServerLevel level, BlockPos pos, RandomSource randomSource) {super.randomTick(state, level, pos, randomSource);}
 
 	@Override
 	public void tick(BlockState state, ServerLevel level, BlockPos pos, RandomSource random) {
+
 		if (!level.isClientSide) {
 			if (state.getValue(BlockStateProperties.WATERLOGGED) && !(state.getValue(BlockStateProperties.LAYERS) < 8)) {
 				state.setValue(BlockStateProperties.WATERLOGGED, false);

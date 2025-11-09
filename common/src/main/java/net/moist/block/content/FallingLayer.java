@@ -2,8 +2,10 @@ package net.moist.block.content;
 
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
+import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.tags.FluidTags;
 import net.minecraft.util.RandomSource;
@@ -33,6 +35,8 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.text.html.BlockView;
+
+import static net.moist.Terrain.getLookGranular;
 
 public class FallingLayer extends FallingBlock implements SimpleWaterloggedBlock {
 	public static final IntegerProperty LAYERS = IntegerProperty.create("layers", 1, 8);
@@ -79,23 +83,32 @@ public class FallingLayer extends FallingBlock implements SimpleWaterloggedBlock
 		double offset = state.getValue(LAYERS)*2.0D;
 		VoxelShape layerShape = Shapes.box(0.0D, 0.0D, 0.0D, 16.0D/16f, offset/16f, 16.0D/16f);
 		VoxelShape snowShape = Shapes.box(0.0D, offset/16f, 0.0D, 16.0D/16f, (offset+snowBoost*2.0D)/16f, 16.0D/16f);
-		if (snowBoost == 0.0) {
+		if ((snowBoost == 0.0) || !(getLookGranular(Minecraft.getInstance().hitResult) >= state.getValue(FallingLayer.LAYERS)/8f)) {
 			return layerShape;
 		}
-		return Shapes.joinUnoptimized(layerShape, snowShape, BooleanOp.OR);
+
+
+		return Shapes.join(layerShape, snowShape, BooleanOp.OR);
 	}
 	@Override public @NotNull VoxelShape getCollisionShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
+		BlockState aboveState = level.getBlockState(pos.above());
+		double snowBoost = aboveState.is(Blocks.SNOW) ? aboveState.getValue(BlockStateProperties.LAYERS)-1 : 0.0D;
+		double offset = state.getValue(LAYERS)*2.0D;
+		VoxelShape layerShape = Shapes.box(0.0D, 0.0D, 0.0D, 16.0D/16f, offset/16f, 16.0D/16f);
+		VoxelShape snowShape = Shapes.box(0.0D, offset/16f, 0.0D, 16.0D/16f, (offset+snowBoost*2.0D)/16f, 16.0D/16f);
+		return layerShape;
+	}
+	@Override public @NotNull VoxelShape getVisualShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
 		BlockState aboveState = level.getBlockState(pos.above());
 		double snowBoost = aboveState.is(Blocks.SNOW) ? aboveState.getValue(BlockStateProperties.LAYERS) : 0.0D;
 		double offset = state.getValue(LAYERS)*2.0D;
 		VoxelShape layerShape = Shapes.box(0.0D, 0.0D, 0.0D, 16.0D/16f, offset/16f, 16.0D/16f);
 		VoxelShape snowShape = Shapes.box(0.0D, offset/16f, 0.0D, 16.0D/16f, (offset+snowBoost*2.0D)/16f, 16.0D/16f);
-		if (snowBoost == 0.0) {
+		if ((snowBoost == 0.0) || !(getLookGranular(Minecraft.getInstance().hitResult) >= state.getValue(FallingLayer.LAYERS)/8f)) {
 			return layerShape;
 		}
-		return Shapes.joinUnoptimized(layerShape, snowShape, BooleanOp.OR);
+		return Shapes.join(layerShape, snowShape, BooleanOp.OR);
 	}
-
 	@Override public boolean canBeReplaced(BlockState state, BlockPlaceContext context) {return context.getItemInHand().getItem() instanceof LayerItem && ((LayerItem) context.getItemInHand().getItem()).getBlock().equals(this) && state.getValue(LAYERS) < MAX_LAYERS;}
 
 	public boolean overgrowable() {
@@ -103,14 +116,6 @@ public class FallingLayer extends FallingBlock implements SimpleWaterloggedBlock
 	}
 
 	@Override public BlockState getStateForPlacement(BlockPlaceContext context) {return super.getStateForPlacement(context);}
-
-	@Override public void playerDestroy(Level level, Player player, BlockPos blockPos, BlockState blockState, @Nullable BlockEntity blockEntity, ItemStack itemStack) {
-		if (level.getBlockState(blockPos.above()).is(Blocks.SNOW)) {
-			level.getBlockState(blockPos.above()).getBlock().playerDestroy(level, player, blockPos.above(), level.getBlockState(blockPos.above()), level.getBlockEntity(blockPos.above()), itemStack);
-		} else {
-			super.playerDestroy(level, player, blockPos, blockState, blockEntity, itemStack);
-		}
-	}
 
 	@Override public void onPlace(BlockState state, Level level, BlockPos pos, BlockState oldState, boolean isMoving) {level.scheduleTick(pos, this, 2);}
 

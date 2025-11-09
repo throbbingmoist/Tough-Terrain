@@ -1,12 +1,16 @@
 package net.moist;
 
+import net.minecraft.client.Minecraft;
+import net.minecraft.core.Direction;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.phys.HitResult;
 import net.moist.block.ModBlocks;
 import net.moist.event.ToughTerrainEvents;
 import net.moist.item.ModCreativeTabs;
 import net.moist.item.ModItems;
 import net.moist.recipe.ModRecipes;
 import net.moist.util.ColorHandler;
+import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -21,10 +25,16 @@ public final class Terrain {
 		return ResourceLocation.fromNamespaceAndPath(Terrain.MOD_ID, id);
 	}
 
+	public static double getLookGranular(@Nullable HitResult hitResult) {
+		if (hitResult != null) {
+			return hitResult.getLocation().get(Direction.Axis.Y) % 1;
+		}
+		return 0.0d;
+	}
 
 	public static void init() {
 		ModCreativeTabs.initTabs();
-
+		//System.out.println("system out DOES work");
 		ModBlocks.register();
 		ModItems.register();
 

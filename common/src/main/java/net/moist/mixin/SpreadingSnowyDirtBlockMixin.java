@@ -5,15 +5,10 @@ import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.tags.FluidTags;
 import net.minecraft.util.RandomSource;
-import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.block.*;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.lighting.LightEngine;
-import net.minecraft.world.phys.shapes.CollisionContext;
-import net.minecraft.world.phys.shapes.VoxelShape;
-import net.moist.Terrain;
 import net.moist.block.ModBlocks;
 import net.moist.block.content.FallingLayer;
 import net.moist.block.content.SpreadingLayer;
@@ -23,38 +18,22 @@ import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 
 @Mixin(SpreadingSnowyDirtBlock.class)
 public abstract class SpreadingSnowyDirtBlockMixin extends SnowyDirtBlock {
 
 	@Shadow private static boolean canBeGrass(BlockState blockState, LevelReader levelReader, BlockPos blockPos) {
-		BlockPos blockPos2 = blockPos.above();
-		BlockState blockState2 = levelReader.getBlockState(blockPos2);
-		if (blockState2.is(Blocks.SNOW) && (Integer)blockState2.getValue(SnowLayerBlock.LAYERS) == 1) {
-			return true;
-		} else if (blockState2.is(Blocks.SNOW) && (Integer)blockState2.getValue(SnowLayerBlock.LAYERS) > 2) {
-			return false;
-		} else if (blockState2.getFluidState().getAmount() == 8) {
-			return false;
-		} else if (!(blockState2.getBlock() instanceof FallingLayer) && !(blockState2.getBlock() instanceof SpreadingLayer)) {
-			return false;
-		} else {
-			int i = LightEngine.getLightBlockInto(levelReader, blockState, blockPos, blockState2, blockPos2, Direction.UP, blockState2.getLightBlock(levelReader, blockPos2));
-			return i < levelReader.getMaxLightLevel();
-		}
+		return true;
 	}
-	@Unique private static boolean terrain$canBeGrass(BlockState blockState, LevelReader levelReader, BlockPos blockPos) {
+	@Unique private static boolean tough_terrain$canBeGrass(BlockState blockState, LevelReader levelReader, BlockPos blockPos) {
 		BlockPos blockPos2 = blockPos.above();
 		BlockState blockState2 = levelReader.getBlockState(blockPos2);
-		if (blockState2.is(Blocks.SNOW) && (Integer)blockState2.getValue(SnowLayerBlock.LAYERS) == 1) {
+		if (blockState2.is(Blocks.SNOW) && blockState2.getValue(SnowLayerBlock.LAYERS) == 1) {
 			return true;
 		} else if (blockState2.getFluidState().getAmount() == 8) {
 			return false;
-		} else if (blockState2.getBlock() instanceof SpreadingLayer) {
-			return false;
-		} else if (blockState2.getBlock() instanceof FallingLayer) {
+		} else if (blockState2.hasProperty(FallingLayer.LAYERS) && blockState2.getValue(FallingLayer.LAYERS) > 1) {
 			return false;
 		} else {
 			int i = LightEngine.getLightBlockInto(levelReader, blockState, blockPos, blockState2, blockPos2, Direction.UP, blockState2.getLightBlock(levelReader, blockPos2));
@@ -74,8 +53,7 @@ public abstract class SpreadingSnowyDirtBlockMixin extends SnowyDirtBlock {
 
 	@Inject(method = "randomTick", at = @At(value = "HEAD"), cancellable = true)
 	private void randomTick(BlockState state, ServerLevel level, BlockPos pos, RandomSource random, CallbackInfo ci) {
-		if (!terrain$canBeGrass(state, level, pos)) {
-			Terrain.LOGGER.info(state.hasProperty(FallingLayer.LAYERS)+" if we have layers");
+		if (!tough_terrain$canBeGrass(state, level, pos)) {
 			if (state.hasProperty(FallingLayer.LAYERS)) {
 				level.setBlockAndUpdate(pos, ModBlocks.LOOSE_DIRT.getPlacedLayer().defaultBlockState().setValue(FallingLayer.LAYERS,state.getValue(FallingLayer.LAYERS).intValue()));
 				ci.cancel();
@@ -85,14 +63,12 @@ public abstract class SpreadingSnowyDirtBlockMixin extends SnowyDirtBlock {
 			}
 		} else if (level.getMaxLocalRawBrightness(pos.above()) >= 9) {
 			BlockState origin_state = this.defaultBlockState();
-			// remember to set to 4
-			int FORSIZE = 4;
-			for(int i = 0; i < FORSIZE; ++i) {
+			for(int i = 0; i < 4; ++i) {
 				BlockPos target_pos = pos.offset(random.nextInt(3) - 1, random.nextInt(5) - 3, random.nextInt(3) - 1);
 				BlockState target_state = level.getBlockState(target_pos);
 
 				if (origin_state.hasProperty(FallingLayer.LAYERS)) {
-					if (target_state.hasProperty(FallingLayer.LAYERS) && ModBlocks.IsLayerOvergrowable(target_state) && (terrain$canBeGrass(target_state, level, target_pos) && !level.getFluidState(target_pos).is(FluidTags.WATER))) {
+					if (target_state.hasProperty(FallingLayer.LAYERS) && ModBlocks.IsLayerOvergrowable(target_state) && (tough_terrain$canBeGrass(target_state, level, target_pos) && !level.getFluidState(target_pos).is(FluidTags.WATER))) {
 						int val = target_state.getValue(FallingLayer.LAYERS); if (val != 8) {
 							level.setBlockAndUpdate(target_pos, origin_state.setValue(FallingLayer.LAYERS,val));
 						} else {
@@ -100,18 +76,18 @@ public abstract class SpreadingSnowyDirtBlockMixin extends SnowyDirtBlock {
 						}
 						ci.cancel();
 					} else {
-						if(target_state.is(Blocks.DIRT) && (terrain$canBeGrass(target_state, level, target_pos) && !level.getFluidState(target_pos).is(FluidTags.WATER))) {
+						if(target_state.is(Blocks.DIRT) && (tough_terrain$canBeGrass(target_state, level, target_pos) && !level.getFluidState(target_pos).is(FluidTags.WATER))) {
 							level.setBlockAndUpdate(target_pos, ModBlocks.GetFullBlockToGrow(origin_state));
 							ci.cancel();
 						}
 					}
 					ci.cancel();
 				} else {
-					if (target_state.hasProperty(FallingLayer.LAYERS) && ModBlocks.IsLayerOvergrowable(target_state) && (terrain$canBeGrass(target_state, level, target_pos) && !level.getFluidState(target_pos).is(FluidTags.WATER))) {
+					if (target_state.hasProperty(FallingLayer.LAYERS) && ModBlocks.IsLayerOvergrowable(target_state) && (tough_terrain$canBeGrass(target_state, level, target_pos) && !level.getFluidState(target_pos).is(FluidTags.WATER))) {
 						level.setBlockAndUpdate(target_pos, ModBlocks.GetLayerBlockToGrow(origin_state, target_state.getValue(FallingLayer.LAYERS)));
 						ci.cancel();
 					}
-					if (!terrain$canBeGrass(target_state, level, target_pos)) {ci.cancel();}
+					if (!tough_terrain$canBeGrass(target_state, level, target_pos)) {ci.cancel();}
 				}
 			}
 		}

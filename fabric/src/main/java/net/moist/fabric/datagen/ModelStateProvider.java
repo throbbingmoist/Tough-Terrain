@@ -31,7 +31,6 @@ public class ModelStateProvider extends FabricModelProvider {
 
 		//generateLayers(blockStateModelGenerator, ModBlocks.LOOSE_RED_CONCRETE_POWDER.get(), Blocks.RED_CONCRETE_POWDER, false, GenericStuff.POWDER);
 		generateGrassLayers(blockStateModelGenerator, ModBlocks.GRASS_LAYER.getPlacedLayer(), Blocks.DIRT, Blocks.GRASS_BLOCK, null);
-		generateLayers(blockStateModelGenerator, ModBlocks.DIRT_LAYER.getPlacedLayer(), Blocks.DIRT, false);
 		generateGrassLikeLayers(blockStateModelGenerator, ModBlocks.MYCELIUM_LAYER.getPlacedLayer(), Blocks.DIRT, Blocks.MYCELIUM, null);
 
 	}

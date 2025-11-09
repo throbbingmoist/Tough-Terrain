@@ -1,0 +1,14 @@
+{
+  "required": true,
+  "package": "net.moist.fabric.mixin",
+  "compatibilityLevel": "JAVA_21",
+  "minVersion": "0.8.7",
+  "client": [
+  ],
+  "priority": 1001,
+  "mixins": [
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}

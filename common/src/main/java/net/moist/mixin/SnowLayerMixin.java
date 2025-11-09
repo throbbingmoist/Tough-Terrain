@@ -23,12 +23,12 @@ public class SnowLayerMixin {
 	private void tough_terrain$getShape(BlockState blockState, BlockGetter blockGetter, BlockPos blockPos, CollisionContext collisionContext, CallbackInfoReturnable<VoxelShape> cir) {
 		BlockState belowState = blockGetter.getBlockState(blockPos.below());
 		if (belowState.hasProperty(FallingLayer.LAYERS)) {
-			int thisHeight = blockState.getValue(BlockStateProperties.LAYERS) * 2;
-			int belowHeight = belowState.getValue(FallingLayer.LAYERS) * 2;
+			int thisHeight = blockState.getValue(BlockStateProperties.LAYERS);
+			int belowHeight = belowState.getValue(FallingLayer.LAYERS);
 			double top = belowHeight + thisHeight;
 			cir.setReturnValue(Block.box(
-				0.0, Math.max(-2.0,-16+belowHeight), 0.0,
-				16.0, Math.max(-2.0,-16+top), 16.0));
+				0.0, Math.max(-16,-16+ (belowHeight*2)), 0.0,
+				16.0, Math.max(-16,-16+(top*2)), 16.0));
 			cir.cancel();
 		}
 	}
@@ -36,12 +36,12 @@ public class SnowLayerMixin {
 	private void tough_terrain$getVisShape(BlockState blockState, BlockGetter blockGetter, BlockPos blockPos, CollisionContext collisionContext, CallbackInfoReturnable<VoxelShape> cir) {
 		BlockState belowState = blockGetter.getBlockState(blockPos.below());
 		if (belowState.hasProperty(FallingLayer.LAYERS)) {
-			int thisHeight = blockState.getValue(BlockStateProperties.LAYERS) * 2;
-			int belowHeight = belowState.getValue(FallingLayer.LAYERS) * 2;
+			int thisHeight = blockState.getValue(BlockStateProperties.LAYERS);
+			int belowHeight = belowState.getValue(FallingLayer.LAYERS);
 			double top = belowHeight + thisHeight;
 			cir.setReturnValue(Block.box(
-				0.0, Math.max(-2.0,-16+belowHeight), 0.0,
-				16.0, Math.max(-2.0,-16+top), 16.0));
+				0.0, Math.max(-16,-16+ (belowHeight*2)), 0.0,
+				16.0, Math.max(-16,-16+(top*2)), 16.0));
 			cir.cancel();
 		}
 	}
@@ -50,12 +50,12 @@ public class SnowLayerMixin {
 	private void tough_terrain$getBSShape(BlockState blockState, BlockGetter blockGetter, BlockPos blockPos, CallbackInfoReturnable<VoxelShape> cir) {
 		BlockState belowState = blockGetter.getBlockState(blockPos.below());
 		if (belowState.hasProperty(FallingLayer.LAYERS)) {
-			int thisHeight = blockState.getValue(BlockStateProperties.LAYERS) * 2;
-			int belowHeight = belowState.getValue(FallingLayer.LAYERS) * 2;
+			int thisHeight = blockState.getValue(BlockStateProperties.LAYERS);
+			int belowHeight = belowState.getValue(FallingLayer.LAYERS);
 			double top = belowHeight + thisHeight;
 			cir.setReturnValue(Block.box(
-				0.0, Math.max(-2.0,-16+belowHeight), 0.0,
-				16.0, Math.max(-2.0,-16+top), 16.0));
+				0.0, Math.max(-16,-16+ (belowHeight*2)), 0.0,
+				16.0, Math.max(-16,-16+(top*2)), 16.0));
 			cir.cancel();
 		}
 	}
@@ -63,15 +63,16 @@ public class SnowLayerMixin {
 	private void tough_terrain$getColShape(BlockState blockState, BlockGetter blockGetter, BlockPos blockPos, CollisionContext collisionContext, CallbackInfoReturnable<VoxelShape> cir) {
 		BlockState belowState = blockGetter.getBlockState(blockPos.below());
 		if (belowState.hasProperty(FallingLayer.LAYERS)) {
-			int thisHeight = blockState.getValue(BlockStateProperties.LAYERS) * 2;
-			int belowHeight = belowState.getValue(FallingLayer.LAYERS) * 2;
+			int thisHeight = blockState.getValue(BlockStateProperties.LAYERS);
+			int belowHeight = belowState.getValue(FallingLayer.LAYERS);
 			double top = belowHeight + thisHeight;
 			cir.setReturnValue(Block.box(
-				0.0, Math.max(-2.0,-16+belowHeight), 0.0,
-				16.0, Math.max(-2.0,-16+top), 16.0));
+				0.0, Math.max(-16,-16+ (belowHeight*2)), 0.0,
+				16.0, Math.max(-16,-16+(top*2))-2, 16.0));
 			cir.cancel();
 		}
 	}
+
 	@Inject(method = "canSurvive", at = @At("HEAD"), cancellable = true)
 	private void tough_terrain$canSurvive(BlockState blockState, LevelReader levelReader, BlockPos blockPos, CallbackInfoReturnable<Boolean> cir) {
 		if (levelReader.getBlockState(blockPos.below()).is(Blocks.SNOW)) {

@@ -18,13 +18,12 @@ public class ModBlocks {
 
 	public static final TagKey<Block> LOOSENS_SURROUNDINGS = TagKey.create(Registries.BLOCK, Terrain.getID("loosens_surroundings"));
 
-	public static final LayerBlockSet LOOSE_DIRT = LayerBlockSet.layerSet(LayerBuilder.falling().named("loose_dirt").withTab(ModCreativeTabs.TOUGH_TERRAIN_TAB).basedOn(Blocks.DIRT));
+	public static final LayerBlockSet LOOSE_DIRT = LayerBlockSet.layerSet(LayerBuilder.falling().overgrowable().named("loose_dirt").withTab(ModCreativeTabs.TOUGH_TERRAIN_TAB).basedOn(Blocks.DIRT));
 	public static final LayerBlockSet LOOSE_SAND = LayerBlockSet.layerSet(LayerBuilder.falling().named("loose_sand").withTab(ModCreativeTabs.TOUGH_TERRAIN_TAB).basedOn(Blocks.SAND));
 	public static final LayerBlockSet LOOSE_RED_SAND = LayerBlockSet.layerSet(LayerBuilder.falling().named("loose_red_sand").withTab(ModCreativeTabs.TOUGH_TERRAIN_TAB).basedOn(Blocks.RED_SAND));
 	public static final LayerBlockSet LOOSE_GRAVEL = LayerBlockSet.layerSet(LayerBuilder.falling().named("loose_gravel").withTab(ModCreativeTabs.TOUGH_TERRAIN_TAB).basedOn(Blocks.GRAVEL));
 
 	public static final LayerBlockSet GRASS_LAYER = LayerBlockSet.layerSet(LayerBuilder.spreading().named("grass_layer").withTab(ModCreativeTabs.TOUGH_TERRAIN_TAB).basedOn(Blocks.GRASS_BLOCK));
-	public static final LayerBlockSet DIRT_LAYER = LayerBlockSet.layerSet(LayerBuilder.spreading().named("dirt_layer").withTab(ModCreativeTabs.TOUGH_TERRAIN_TAB).basedOn(Blocks.DIRT));
 	public static final LayerBlockSet MYCELIUM_LAYER = LayerBlockSet.layerSet(LayerBuilder.spreading().named("mycelium_layer").withTab(ModCreativeTabs.TOUGH_TERRAIN_TAB).basedOn(Blocks.MYCELIUM));
 
 	public static boolean IsLayerOvergrowable(BlockState state) {

@@ -4,10 +4,10 @@
   "compatibilityLevel": "JAVA_21",
   "minVersion": "0.8.7",
   "client": [
-    "BlockModelRenderMixin",
-    "LevelMixin"
+    "LevelMixin",
+    "MinecraftMixin"
   ],
-  "priority": 500,
+  "priority": 1000,
   "mixins": [
     "BlockMixin",
     "FallingBlockEntityMixin",

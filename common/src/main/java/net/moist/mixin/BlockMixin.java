@@ -21,15 +21,11 @@ public abstract class BlockMixin {
 		if (blockState.is(Blocks.SNOW)) {
 			BlockState stateBelowSnow = blockGetter.getBlockState(blockPos.below());
 			if (stateBelowSnow.hasProperty(FallingLayer.LAYERS)) {
-				int totalHeight = blockState.getValue(BlockStateProperties.LAYERS) + stateBelowSnow.getValue(FallingLayer.LAYERS);
-				VoxelShape fullFace = Block.box(0, stateBelowSnow.getValue(FallingLayer.LAYERS), 0, 16, totalHeight, 16);
-
-				//if (Shapes.joinIsNotEmpty(fullFace)) {
-					cir.setReturnValue(true);
-					cir.cancel();
-				//}
-				// If the intersection is not empty, the original method runs (it will return true/skip rendering correctly)
+//				todo: introduce specific logic for detection
+				cir.setReturnValue(true);
+				cir.cancel();
 			}
 		}
 	}
+	// OLD ATTEMPT ↑
 }

@@ -65,15 +65,6 @@ public class ToughTerrainEvents {
 
 	public static void subscribe() {
 		BlockEvent.BREAK.register((level, blockPos, state, player, xp) -> {
-			if (state.hasProperty(FallingLayer.LAYERS)) {
-				if (level.getBlockState(blockPos.above()).is(Blocks.SNOW)) {
-					level.getBlockState(blockPos.above()).getBlock().playerDestroy(level, player, blockPos, level.getBlockState(blockPos.above()), level.getBlockEntity(blockPos.above()), player.getMainHandItem().copy());
-					level.setBlock(blockPos.above(), Blocks.AIR.defaultBlockState(), 11);
-					if (!level.getBlockState(blockPos.above()).is(Blocks.SNOW)) {
-						return EventResult.interruptFalse();
-					}
-				}
-			}
 			if (!player.isHolding(ItemPredicate.Builder.item().of(SHOVELS_THAT_PACK).build())) {getAdjacent(blockPos).forEach((key, targetPos) -> {
 					if (level.getBlockState(blockPos).is(ModBlocks.LOOSENS_SURROUNDINGS)) {
 						Optional<LooseningRecipe> recipeOptional = matchLoosenRecipe(level, targetPos);

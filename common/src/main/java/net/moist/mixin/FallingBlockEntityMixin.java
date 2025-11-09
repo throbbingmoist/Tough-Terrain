@@ -45,15 +45,14 @@ public abstract class FallingBlockEntityMixin extends Entity {
 		BlockState fallingBlockState = this.getBlockState();
 		BlockState existingState = level.getBlockState(currentPos);
 
-
 		//Terrain.LOGGER.info("SPEED: " + entity.getDeltaMovement().y() + ", AT "+ entity.position() +" ||| RESULT:" + blockHitResult.getType().toString() + " on "+ existingState +" at " + detectionCoords + "(offset "+offset+" down) at age " + this.time);
-		// we use a velocity check to determine if the block is about to land
+		// use a velocity check to determine if the block is about to land
 		if (entity.getDeltaMovement().y() <= 0 && !level.isClientSide && fallingBlockState.hasProperty(FallingLayer.LAYERS)) {
 //			if (blockHitResult.getType() != HitResult.Type.MISS) {
 //				((ServerLevel) level).sendParticles(new DustParticleOptions(new Vector3f(1f, 0f, 0f), 1.0f), detectionCoords.x, detectionCoords.y, detectionCoords.z, 1, 0.0f, 0.0f, 0.0f, 0.0f);
 //			} else {
 //				((ServerLevel) level).sendParticles(new DustParticleOptions(new Vector3f(0f, 1f, 0f), 1.0f), detectionCoords.x, detectionCoords.y, detectionCoords.z, 1, 0.0f, 0.0f, 0.0f, 0.0f);
-//			}
+//			} this is just a commented out debug string i used for visualizing clipping. make no mistake, this is being left in case i update that again.
 			if (existingState.hasProperty(FallingLayer.LAYERS) && fallingBlockState.hasProperty(FallingLayer.LAYERS) && (existingState.is(fallingBlockState.getBlock()))) { // we check if the block we land on has layers, is the same as the falling block, and if we have layers as a redundancy check. just in case.
 				//Terrain.LOGGER.info("Triggering Block landed in layers.");
 				int currentLayers = existingState.getValue(FallingLayer.LAYERS);
@@ -67,7 +66,7 @@ public abstract class FallingBlockEntityMixin extends Entity {
 					entity.discard();
 					ci.cancel();
 				} else {
-					int excessLayers = totalLayers - FallingLayer.MAX_LAYERS; // this is the magic part that spawns the stuff above.
+					int excessLayers = totalLayers - FallingLayer.MAX_LAYERS; // this is the magic part that calculates amount to spawn of the stuff above.
 					BlockState newMaxState = existingState.setValue(FallingLayer.LAYERS, FallingLayer.MAX_LAYERS);
 					level.setBlock(currentPos, newMaxState, 11); // it sets the block here, then, above us, we also place the excess layers
 					level.playSound(null, currentPos, this.blockState.getSoundType().getPlaceSound(), SoundSource.BLOCKS, 1f, 0.2f);
@@ -78,11 +77,12 @@ public abstract class FallingBlockEntityMixin extends Entity {
 				}
 				entity.discard();
 				ci.cancel();
-			} else if ((blockHitResult.getType() != HitResult.Type.MISS) && fallingBlockState.hasProperty(FallingLayer.LAYERS) && !(level.getBlockState(entity.blockPosition()).is(fallingBlockState.getBlock()) || level.getBlockState(entity.blockPosition().below(1)).is(fallingBlockState.getBlock()) || level.getBlockState(entity.blockPosition().below(2)).is(fallingBlockState.getBlock()))) { // make sure we hit something before running the code
-
+			} else if (
+				(blockHitResult.getType() != HitResult.Type.MISS) && fallingBlockState.hasProperty(FallingLayer.LAYERS) &&
+				!(level.getBlockState(entity.blockPosition()).is(fallingBlockState.getBlock()) || level.getBlockState(entity.blockPosition().below(1)).is(fallingBlockState.getBlock()) || level.getBlockState(entity.blockPosition().below(2)).is(fallingBlockState.getBlock()))
+			) { // make sure we hit something before running the code
 				currentPos = entity.blockPosition();
 				existingState = level.getBlockState(currentPos);
-
 				//Terrain.LOGGER.info("Triggering Block Hit Result != Miss code");
 				if (existingState.canBeReplaced()) { // check if the block can be placed.
 					if (level.setBlock(currentPos, fallingBlockState, 11)) {
@@ -92,17 +92,13 @@ public abstract class FallingBlockEntityMixin extends Entity {
 						ci.cancel();
 					} else {  // fallback.
 						//Terrain.LOGGER.info("Dropping some "+fallingBlockState+"at "+currentPos);
-						for (int i = 1; i <= fallingBlockState.getValue(FallingLayer.LAYERS); i++) {
-							entity.spawnAtLocation(this.getBlockState().getBlock());
-						}
+						for (int i = 1; i <= fallingBlockState.getValue(FallingLayer.LAYERS); i++) {entity.spawnAtLocation(this.getBlockState().getBlock());}
 						entity.discard();
 						ci.cancel();
 					}
 				} else {
 					//Terrain.LOGGER.info("Cant replace"+existingState+"! dropping some "+fallingBlockState+"at "+currentPos);
-					for (int i = 1; i <= fallingBlockState.getValue(FallingLayer.LAYERS); i++) {
-						entity.spawnAtLocation(this.getBlockState().getBlock());
-					}
+					for (int i = 1; i <= fallingBlockState.getValue(FallingLayer.LAYERS); i++) {entity.spawnAtLocation(this.getBlockState().getBlock());}
 					entity.discard();
 					ci.cancel();
 				}

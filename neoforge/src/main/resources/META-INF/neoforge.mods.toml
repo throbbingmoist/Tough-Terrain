@@ -36,3 +36,6 @@ side = "BOTH"
 
 [[mixins]]
 config = "tough_terrain.mixins.json"
+
+[[mixins]]
+config = "tough_terrain.neoforge.mixins.json"
