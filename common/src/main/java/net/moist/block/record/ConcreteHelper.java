@@ -1,4 +1,4 @@
-package net.moist.util;
+package net.moist.block.record;
 
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;

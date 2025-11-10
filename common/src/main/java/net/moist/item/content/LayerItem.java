@@ -11,6 +11,7 @@ import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.material.Fluids;
@@ -48,7 +49,7 @@ public class LayerItem extends BlockItem {
 					if (!level.isClientSide) {
 						int layers = currentLayers + this.getLayerAmount();
 						if (layers > FallingLayer.MAX_LAYERS) {
-							if (level.getBlockState(pos.above()).canBeReplaced()) {
+							if (level.getBlockState(pos.above()).canBeReplaced() && !level.getBlockState(pos.above()).is(Blocks.SNOW)) {
 								level.setBlock(pos, existingState.setValue(FallingLayer.LAYERS, FallingLayer.MAX_LAYERS).setValue(BlockStateProperties.WATERLOGGED,level.getFluidState(pos).is(Fluids.WATER)), 11);
 								level.setBlock(pos.above(), existingState.setValue(FallingLayer.LAYERS, layers - FallingLayer.MAX_LAYERS).setValue(BlockStateProperties.WATERLOGGED,level.getFluidState(pos.above()).is(Fluids.WATER)), 11);
 							} else {
