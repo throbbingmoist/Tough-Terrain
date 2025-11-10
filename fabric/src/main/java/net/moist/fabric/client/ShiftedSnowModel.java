@@ -86,9 +86,9 @@ public class ShiftedSnowModel implements BakedModel {
 	@Override public boolean isGui3d() {return bakedOriginal.isGui3d();}
 	@Override public boolean usesBlockLight() {return bakedOriginal.usesBlockLight();}
 	@Override public boolean isCustomRenderer() {return bakedOriginal.isCustomRenderer();}
-	@Override public TextureAtlasSprite getParticleIcon() {return bakedOriginal.getParticleIcon();}
-	@Override public ItemTransforms getTransforms() {return bakedOriginal.getTransforms();}
-	@Override public ItemOverrides getOverrides() {return bakedOriginal.getOverrides();}
+	@Override public @NotNull TextureAtlasSprite getParticleIcon() {return bakedOriginal.getParticleIcon();}
+	@Override public @NotNull ItemTransforms getTransforms() {return bakedOriginal.getTransforms();}
+	@Override public @NotNull ItemOverrides getOverrides() {return bakedOriginal.getOverrides();}
 
 	private boolean shouldDownShift(BlockAndTintGetter world, BlockPos pos) {
 		BlockState belowState = world.getBlockState(pos.below());

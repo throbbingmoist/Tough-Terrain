@@ -16,7 +16,7 @@ import org.jetbrains.annotations.Nullable;
 public final class ModFabricClient implements ClientModInitializer {
 	@Override
 	public void onInitializeClient() {
-		Terrain.LOGGER.info("Putting Block Render types in.");
+		//Terrain.LOGGER.info("Putting Block Render types in.");
 		BlockRenderLayerMap.INSTANCE.putBlocks(RenderType.cutout(), ModBlocks.GRASS_LAYER.getPlacedLayer(), ModBlocks.MYCELIUM_LAYER.getPlacedLayer());
 
 
@@ -24,7 +24,7 @@ public final class ModFabricClient implements ClientModInitializer {
 			pluginContext.modifyModelAfterBake().register((model, context) -> {
 				@Nullable ResourceLocation modelID = context.resourceId();
 				if (modelID != null) {
-					System.out.println("Loading: Namespace '" + modelID.getNamespace() + "', path "+ modelID.getPath());
+					//System.out.println("Loading: Namespace '" + modelID.getNamespace() + "', path "+ modelID.getPath());
 					if (modelID.getNamespace().equals("minecraft") && modelID.getPath().contains("block/snow")) {
 						return new ShiftedSnowModel(model);
 					}
@@ -32,8 +32,5 @@ public final class ModFabricClient implements ClientModInitializer {
 				return model;
 			});
 		});
-	}
-
-	public void putInstance(Block block, RenderType type) {
 	}
 }
