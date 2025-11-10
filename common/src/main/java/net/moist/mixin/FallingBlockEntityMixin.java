@@ -92,13 +92,13 @@ public abstract class FallingBlockEntityMixin extends Entity {
 						ci.cancel();
 					} else {  // fallback.
 						//Terrain.LOGGER.info("Dropping some "+fallingBlockState+"at "+currentPos);
-						for (int i = 1; i <= fallingBlockState.getValue(FallingLayer.LAYERS); i++) {entity.spawnAtLocation(this.getBlockState().getBlock());}
+						for (int i = 1; i <= fallingBlockState.getValue(FallingLayer.LAYERS); i++) {entity.spawnAtLocation((ServerLevel) level, this.getBlockState().getBlock());}
 						entity.discard();
 						ci.cancel();
 					}
 				} else {
 					//Terrain.LOGGER.info("Cant replace"+existingState+"! dropping some "+fallingBlockState+"at "+currentPos);
-					for (int i = 1; i <= fallingBlockState.getValue(FallingLayer.LAYERS); i++) {entity.spawnAtLocation(this.getBlockState().getBlock());}
+					for (int i = 1; i <= fallingBlockState.getValue(FallingLayer.LAYERS); i++) {entity.spawnAtLocation((ServerLevel) level, this.getBlockState().getBlock());}
 					entity.discard();
 					ci.cancel();
 				}

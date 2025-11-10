@@ -3,6 +3,7 @@ package net.moist.fabric.datagen;
 import dev.architectury.registry.registries.RegistrySupplier;
 import net.fabricmc.fabric.api.datagen.v1.FabricDataOutput;
 import net.fabricmc.fabric.api.datagen.v1.provider.FabricRecipeProvider;
+import net.minecraft.advancements.critereon.ItemPredicate;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.data.recipes.*;
@@ -39,7 +40,7 @@ public class RecipeProvider extends FabricRecipeProvider {
 
 		SimpleCookingRecipeBuilder
 			.smelting(Ingredient.of(ModItems.ITEMS.getRegistrar().get(Terrain.getID("loose_sand_block")), ModItems.ITEMS.getRegistrar().get(Terrain.getID("loose_red_sand_block"))), RecipeCategory.BUILDING_BLOCKS, Blocks.GLASS, 0.1f, 200)
-			.unlockedBy("any", RecipeProvider.has(ModBlocks.LOOSE_SAND.getPlacedLayer()))
+			.unlockedBy("any", ItemPredicate.Builder.item().of(ModBlocks.LOOSE_SAND.heldItem()))
 			.save(exporter, Terrain.getID("smelt_loose_sand_block"));
 
 		createLooseningRecipe(exporter, "loosen_dirt", Blocks.DIRT, ModBlocks.LOOSE_DIRT.getPlacedLayer());

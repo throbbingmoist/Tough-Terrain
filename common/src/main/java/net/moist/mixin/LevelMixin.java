@@ -35,7 +35,7 @@ public class LevelMixin {
 
 
 	@ModifyVariable(
-		method = "renderLevel",
+		method = "renderBlockOutline",
 		at = @At(
 			value = "INVOKE_ASSIGN",
 			ordinal = 0,

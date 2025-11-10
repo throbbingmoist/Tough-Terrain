@@ -1,5 +1,6 @@
 package net.moist.mixin;
 
+import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.level.BlockGetter;
@@ -17,9 +18,9 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 @Mixin(Block.class)
 public abstract class BlockMixin {
 	@Inject(method = "shouldRenderFace", at = @At(value = "HEAD"), cancellable = true)
-	private static void tough_terrain$shouldRenderFace(BlockState blockState, BlockGetter blockGetter, BlockPos blockPos, Direction direction, BlockPos blockPos2, CallbackInfoReturnable<Boolean> cir) {
+	private static void tough_terrain$shouldRenderFace(BlockState blockState, BlockState blockState2, Direction direction, CallbackInfoReturnable<Boolean> cir) {
 		if (blockState.is(Blocks.SNOW)) {
-			BlockState stateBelowSnow = blockGetter.getBlockState(blockPos.below());
+			BlockState stateBelowSnow = blockState2;
 			if (stateBelowSnow.hasProperty(FallingLayer.LAYERS)) {
 //				todo: introduce specific logic for detection
 				cir.setReturnValue(true);

@@ -36,8 +36,8 @@ public abstract class SpreadingSnowyDirtBlockMixin extends SnowyDirtBlock {
 		} else if (blockState2.hasProperty(FallingLayer.LAYERS) && blockState2.getValue(FallingLayer.LAYERS) > 1) {
 			return false;
 		} else {
-			int i = LightEngine.getLightBlockInto(levelReader, blockState, blockPos, blockState2, blockPos2, Direction.UP, blockState2.getLightBlock(levelReader, blockPos2));
-			return i < levelReader.getMaxLightLevel();
+			int i = LightEngine.getLightBlockInto(blockState, blockState2, Direction.UP, blockState2.getLightBlock());
+			return i < levelReader.getMaxLocalRawBrightness(blockPos);
 		}
 	}
 

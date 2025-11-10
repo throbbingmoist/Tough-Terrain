@@ -10,7 +10,7 @@ public class PowderItemTintProvider implements ItemColor {
 	public int getColor(ItemStack itemStack, int tintIndex) {
 		if (tintIndex == 0) {
 			if (itemStack.getItem() instanceof LayerItem) {
-				int rgb = ((LayerItem) itemStack.getItem()).getBlock().defaultMapColor().calculateRGBColor(MapColor.Brightness.HIGH);
+				int rgb = ((LayerItem) itemStack.getItem()).getBlock().defaultMapColor().calculateARGBColor(MapColor.Brightness.HIGH);
 				int r = (rgb >> 16) & 0xFF;
 				int g = (rgb >> 8) & 0xFF;
 				int b = rgb & 0xFF;
