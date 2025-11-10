@@ -19,20 +19,15 @@ import org.jetbrains.annotations.NotNull;
 
 import static net.moist.Terrain.getLookGranular;
 
-public class ConcretePowderLayer extends FallingBlock {
+public class ConcreteLayer extends Block {
 	public static final IntegerProperty LAYERS = FallingLayer.LAYERS;
 	public static final int MAX_LAYERS = FallingLayer.MAX_LAYERS;
 
-	public static final MapCodec<ConcretePowderLayer> CODEC = RecordCodecBuilder.mapCodec(instance ->
-		instance.group(propertiesCodec()).apply(instance, ConcretePowderLayer::new)
-	);
-	@Override public @NotNull MapCodec<ConcretePowderLayer> codec() {return CODEC;}
-
-	public ConcretePowderLayer(Block block_based_on) {
+	public ConcreteLayer(Block block_based_on) {
 		super(Properties.ofFullCopy(block_based_on));
 		this.registerDefaultState(this.stateDefinition.any().setValue(LAYERS, 1));
 	}
-	public ConcretePowderLayer(Properties properties) {
+	public ConcreteLayer(Properties properties) {
 		super(properties);
 		this.registerDefaultState(this.stateDefinition.any().setValue(LAYERS, 1));
 	}

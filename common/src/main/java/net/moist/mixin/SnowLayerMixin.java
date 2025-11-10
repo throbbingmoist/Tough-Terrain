@@ -9,7 +9,6 @@ import net.minecraft.world.level.block.SnowLayerBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.phys.shapes.CollisionContext;
-import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import net.moist.block.content.FallingLayer;
 import org.spongepowered.asm.mixin.Mixin;
@@ -46,6 +45,12 @@ public class SnowLayerMixin {
 		}
 	}
 
+	@Inject(method = "getShadeBrightness", at = @At("HEAD"), cancellable = true)
+	protected void tough_terrain$getShadeBrightness(BlockState blockState, BlockGetter blockGetter, BlockPos blockPos, CallbackInfoReturnable<Float> cir) {
+		cir.setReturnValue((Integer)blockState.getValue(SnowLayerBlock.LAYERS) == 8 && !blockGetter.getBlockState(blockPos.below()).hasProperty(FallingLayer.LAYERS) ? 0.2F : 1.0F);
+		cir.cancel();
+	}
+
 	@Inject(method = "getBlockSupportShape", at = @At("HEAD"), cancellable = true)
 	private void tough_terrain$getBSShape(BlockState blockState, BlockGetter blockGetter, BlockPos blockPos, CallbackInfoReturnable<VoxelShape> cir) {
 		BlockState belowState = blockGetter.getBlockState(blockPos.below());
@@ -76,7 +81,7 @@ public class SnowLayerMixin {
 	@Inject(method = "canSurvive", at = @At("HEAD"), cancellable = true)
 	private void tough_terrain$canSurvive(BlockState blockState, LevelReader levelReader, BlockPos blockPos, CallbackInfoReturnable<Boolean> cir) {
 		if (levelReader.getBlockState(blockPos.below()).is(Blocks.SNOW)) {
-			if (levelReader.getBlockState(blockPos.below(2)).hasProperty(FallingLayer.LAYERS)) {
+			if (levelReader.getBlockState(blockPos.below(2)).hasProperty(FallingLayer.LAYERS) && levelReader.getBlockState(blockPos.below(2)).getValue(FallingLayer.LAYERS) < 8) {
 				cir.setReturnValue(false);
 				cir.cancel();
 			}

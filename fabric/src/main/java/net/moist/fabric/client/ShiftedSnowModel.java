@@ -40,7 +40,7 @@ public class ShiftedSnowModel implements BakedModel {
 
 		boolean needsShift = shouldDownShift(blockView, pos);
 
-		if (needsShift) {
+		if (needsShift && state.is(Blocks.SNOW)) {
 			// Create a translation matrix for the shift
 
 			RenderContext.QuadTransform shiftTransform = quad -> {

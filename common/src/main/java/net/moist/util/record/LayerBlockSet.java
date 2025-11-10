@@ -1,4 +1,4 @@
-package net.moist.util.content;
+package net.moist.util.record;
 
 import dev.architectury.registry.client.rendering.ColorHandlerRegistry;
 import dev.architectury.registry.registries.RegistrySupplier;

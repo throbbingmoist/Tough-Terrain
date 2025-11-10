@@ -5,7 +5,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.material.MapColor;
 import net.moist.item.content.LayerItem;
 
-public class PowderTintProvider implements ItemColor {
+public class PowderItemTintProvider implements ItemColor {
 	@Override
 	public int getColor(ItemStack itemStack, int tintIndex) {
 		if (tintIndex == 0) {

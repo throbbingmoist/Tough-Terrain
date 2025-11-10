@@ -49,10 +49,7 @@ public class FallingLayer extends FallingBlock implements SimpleWaterloggedBlock
 		));
 	private boolean overgrowable;
 
-	@Override
-	public MapCodec<FallingLayer> codec() {
-		return CODEC;
-	}
+	@Override public MapCodec<FallingLayer> codec() {return CODEC;}
 	// ----------------------------
 
 	public FallingLayer(BlockBehaviour.Properties properties) {
