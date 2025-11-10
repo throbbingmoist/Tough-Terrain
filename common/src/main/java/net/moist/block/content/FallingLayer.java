@@ -141,7 +141,7 @@ public class FallingLayer extends FallingBlock implements SimpleWaterloggedBlock
 		if (blockStateBelow.hasProperty(LAYERS) && blockStateBelow.getValue(LAYERS) == 8) {
 			return true;
 		}
-		return blockStateBelow.isFaceSturdy(level, pos.below(), Direction.UP);
+		return blockStateBelow.isFaceSturdy(level, pos.below(), Direction.UP) || blockStateBelow.isCollisionShapeFullBlock(level, pos.below());
 	}
 
 	@Override public BlockState updateShape(BlockState state, Direction direction, BlockState neighborState, LevelAccessor level, BlockPos currentPos, BlockPos neighborPos) {
