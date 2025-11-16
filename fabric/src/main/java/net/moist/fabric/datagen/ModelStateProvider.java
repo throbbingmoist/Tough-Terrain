@@ -106,8 +106,8 @@ public class ModelStateProvider extends FabricModelProvider {
 		JsonArray elements = new JsonArray();
 		JsonObject element = new JsonObject();
 
-		JsonArray fromArray = new JsonArray();   fromArray.add(-0.001f); fromArray.add(0f); fromArray.add(-0.001f);element.add("from", fromArray);
-		JsonArray toArray = new JsonArray();     toArray.add(16.001f); toArray.add(level*2f); toArray.add(16.001f);element.add("to", toArray);
+		JsonArray fromArray = new JsonArray();   fromArray.add(-0.01f); fromArray.add(-0.01f); fromArray.add(-0.01f);element.add("from", fromArray);
+		JsonArray toArray = new JsonArray();     toArray.add(16.01f); toArray.add(level*2f); toArray.add(16.01f);element.add("to", toArray);
 
 
 		JsonObject faces = new JsonObject();
@@ -144,8 +144,8 @@ public class ModelStateProvider extends FabricModelProvider {
 		JsonArray elements = new JsonArray();
 		JsonObject block = new JsonObject();
 
-		JsonArray fromArray = new JsonArray();   fromArray.add(-0.001f); fromArray.add(0f); fromArray.add(- 0.001f);   block.add("from", fromArray);
-		JsonArray toArray = new JsonArray();     toArray.add(16.001f); toArray.add(level*2f); toArray.add(16.001f);   block.add("to", toArray);
+		JsonArray fromArray = new JsonArray();   fromArray.add(-0.01f); fromArray.add(-0.01f); fromArray.add(- 0.01f);   block.add("from", fromArray);
+		JsonArray toArray = new JsonArray();     toArray.add(16.01f); toArray.add(level*2f); toArray.add(16.01f);   block.add("to", toArray);
 
 		JsonArray uvs = new JsonArray();
 		uvs.add(0);uvs.add(0);
@@ -225,8 +225,8 @@ public class ModelStateProvider extends FabricModelProvider {
 
 		JsonObject block = new JsonObject();
 
-		JsonArray fromArray = new JsonArray();   fromArray.add(-0.001f); fromArray.add(0f); fromArray.add(- 0.001f);   block.add("from", fromArray);
-		JsonArray toArray = new JsonArray();     toArray.add(16.001f); toArray.add(level*2f); toArray.add(16.001f);   block.add("to", toArray);
+		JsonArray fromArray = new JsonArray();   fromArray.add(-0.01f); fromArray.add(-0.01f); fromArray.add(- 0.01f);   block.add("from", fromArray);
+		JsonArray toArray = new JsonArray();     toArray.add(16.01f); toArray.add(level*2f); toArray.add(16.01f);   block.add("to", toArray);
 
 		JsonArray uvs = new JsonArray();
 		uvs.add(0);uvs.add(0);
@@ -269,8 +269,8 @@ public class ModelStateProvider extends FabricModelProvider {
 
 		JsonObject block = new JsonObject();
 
-		JsonArray fromArray = new JsonArray();   fromArray.add(-0.001f); fromArray.add(0f); fromArray.add(- 0.001f);   block.add("from", fromArray);
-		JsonArray toArray = new JsonArray();     toArray.add(16.001f); toArray.add(level*2f); toArray.add(16.001f);   block.add("to", toArray);
+		JsonArray fromArray = new JsonArray();   fromArray.add(-0.01f); fromArray.add(-0.01f); fromArray.add(-0.01f);   block.add("from", fromArray);
+		JsonArray toArray = new JsonArray();     toArray.add(16.01f); toArray.add(level*2f); toArray.add(16.01f);   block.add("to", toArray);
 
 		JsonArray uvs = new JsonArray();
 		uvs.add(0);uvs.add(0);
