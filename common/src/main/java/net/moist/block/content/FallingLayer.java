@@ -30,6 +30,7 @@ import net.minecraft.world.phys.shapes.BooleanOp;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
+import net.moist.block.entity.LayerBE;
 import net.moist.item.content.LayerItem;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -38,7 +39,7 @@ import javax.swing.text.html.BlockView;
 
 import static net.moist.Terrain.getLookGranular;
 
-public class FallingLayer extends FallingBlock implements SimpleWaterloggedBlock {
+public class FallingLayer extends FallingBlock implements SimpleWaterloggedBlock, EntityBlock {
 	public static final IntegerProperty LAYERS = IntegerProperty.create("layers", 1, 8);
 	public static final int MAX_LAYERS = 8;
 
@@ -73,7 +74,6 @@ public class FallingLayer extends FallingBlock implements SimpleWaterloggedBlock
 		builder.add(BlockStateProperties.WATERLOGGED).add(LAYERS);
 	}
 
-
 	@Override public @NotNull VoxelShape getShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
 		BlockState aboveState = level.getBlockState(pos.above());
 		double snowBoost = aboveState.is(Blocks.SNOW) ? aboveState.getValue(BlockStateProperties.LAYERS) : 0.0D;
@@ -107,11 +107,16 @@ public class FallingLayer extends FallingBlock implements SimpleWaterloggedBlock
 		return Shapes.join(layerShape, snowShape, BooleanOp.OR);
 	}
 	@Override public boolean canBeReplaced(BlockState state, BlockPlaceContext context) {return context.getItemInHand().getItem() instanceof LayerItem && ((LayerItem) context.getItemInHand().getItem()).getBlock().equals(this) && state.getValue(LAYERS) < MAX_LAYERS;}
-
+	@Override protected float getShadeBrightness(BlockState blockState, BlockGetter blockGetter, BlockPos blockPos) {
+		return 1.0F;
+	}
 	public boolean overgrowable() {
 		return this.overgrowable;
 	}
-
+	@Override
+	protected boolean useShapeForLightOcclusion(BlockState blockState) {
+		return true;
+	}
 	@Override public BlockState getStateForPlacement(BlockPlaceContext context) {return super.getStateForPlacement(context);}
 
 	@Override public void onPlace(BlockState state, Level level, BlockPos pos, BlockState oldState, boolean isMoving) {level.scheduleTick(pos, this, 2);}
@@ -154,4 +159,11 @@ public class FallingLayer extends FallingBlock implements SimpleWaterloggedBlock
 	private static boolean isPathfindable(BlockState state) {
 		return state.canBeReplaced() && !state.getFluidState().is(FluidTags.WATER);
 	}
+
+	@Override
+	public @Nullable BlockEntity newBlockEntity(BlockPos blockPos, BlockState blockState) {
+		return new LayerBE(blockPos, blockState);
+
+	}
+	@Override public RenderShape getRenderShape(BlockState state) {return RenderShape.MODEL;}
 }

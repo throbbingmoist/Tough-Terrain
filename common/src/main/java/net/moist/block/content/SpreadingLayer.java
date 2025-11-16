@@ -4,13 +4,16 @@ import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.tags.BlockTags;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.block.*;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -26,13 +29,14 @@ import net.minecraft.world.phys.shapes.BooleanOp;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
+import net.moist.block.entity.LayerBE;
 import net.moist.item.content.LayerItem;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import static net.moist.Terrain.getLookGranular;
 
-public class SpreadingLayer extends SpreadingSnowyDirtBlock implements SimpleWaterloggedBlock {
+public class SpreadingLayer extends SpreadingSnowyDirtBlock implements SimpleWaterloggedBlock, EntityBlock {
 	public static final IntegerProperty LAYERS = FallingLayer.LAYERS;
 	public static final int MAX_LAYERS = 8;
 	public static final BooleanProperty SNOWY = BlockStateProperties.SNOWY;
@@ -65,6 +69,18 @@ public class SpreadingLayer extends SpreadingSnowyDirtBlock implements SimpleWat
 	@Override protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
 		builder.add(BlockStateProperties.WATERLOGGED).add(LAYERS);
 		builder.add(SNOWY);
+	}
+
+	@Override protected BlockState updateShape(BlockState blockState, Direction direction, BlockState blockState2, LevelAccessor levelAccessor, BlockPos blockPos, BlockPos blockPos2) {return direction == Direction.UP ? (BlockState)blockState.setValue(SNOWY, isSnowySetting(blockState2)) : super.updateShape(blockState, direction, blockState2, levelAccessor, blockPos, blockPos2);}
+	private static boolean isSnowySetting(BlockState blockState) {return blockState.is(BlockTags.SNOW);}
+//	@Override protected float getShadeBrightness(BlockState blockState, BlockGetter blockGetter, BlockPos blockPos) {
+//		return (Integer)blockState.getValue(LAYERS) == 8 ? 0.2F : 1.0F;
+//	}
+
+
+	@Override
+	protected boolean useShapeForLightOcclusion(BlockState blockState) {
+		return true;
 	}
 
 	@Override public @NotNull VoxelShape getShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
@@ -121,4 +137,11 @@ public class SpreadingLayer extends SpreadingSnowyDirtBlock implements SimpleWat
 	@Override public boolean canSurvive(BlockState state, LevelReader level, BlockPos pos) {
 		return true;
 	}
+
+	@Override
+	public @Nullable BlockEntity newBlockEntity(BlockPos blockPos, BlockState blockState) {
+		return new LayerBE(blockPos, blockState);
+
+	}
+	@Override public RenderShape getRenderShape(BlockState state) {return RenderShape.MODEL;}
 }

@@ -6,9 +6,12 @@ import net.fabricmc.fabric.api.datagen.v1.provider.FabricLanguageProvider;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.world.level.block.Block;
 import net.moist.block.ModBlocks;
+import net.moist.event.ToughTerrainEvents;
 import net.moist.item.ModCreativeTabs;
+import net.moist.item.TerrainTags;
 
 import java.util.concurrent.CompletableFuture;
+
 
 public class LanguageProvider extends FabricLanguageProvider {
 	protected LanguageProvider(FabricDataOutput dataOutput, CompletableFuture<HolderLookup.Provider> registryLookup) {
@@ -24,6 +27,8 @@ public class LanguageProvider extends FabricLanguageProvider {
 
 		translateLayers(translationBuilder,ModBlocks.GRASS_LAYER.placedLayer(), "Grass Layer");
 		translateLayers(translationBuilder,ModBlocks.MYCELIUM_LAYER.placedLayer(), "Mycelium Layer");
+
+		translationBuilder.add(TerrainTags.NON_DISTURBING_SHOVELS, "Non-Loosening Shovels");
 
 		translationBuilder.add(ModCreativeTabs.TOUGH_TERRAIN_TAB.getKey(), "Tough Terrain");
 	}

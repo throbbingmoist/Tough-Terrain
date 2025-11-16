@@ -13,6 +13,8 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.moist.Terrain;
 import net.moist.block.ModBlocks;
+import net.moist.event.ToughTerrainEvents;
+import net.moist.item.TerrainTags;
 
 import java.util.concurrent.CompletableFuture;
 public class TagProviders {
@@ -41,8 +43,8 @@ public class TagProviders {
 	}
 
 	public static class ModItemTags extends  FabricTagProvider.ItemTagProvider {
-		public static final boolean shouldLoosenForWood = false;
-		public static final  boolean shouldLoosenForStone = false;
+		public static final boolean shouldLoosenForWood = true;
+		public static final  boolean shouldLoosenForStone = true;
 
 		public ModItemTags(FabricDataOutput output, CompletableFuture<HolderLookup.Provider> completableFuture) {
 			super(output, completableFuture);
@@ -50,11 +52,11 @@ public class TagProviders {
 
 		@Override
 		protected void addTags(HolderLookup.Provider wrapperLookup) {
-			FabricTagProvider<Item>.FabricTagBuilder tag = getOrCreateTagBuilder(TagKey.create(Registries.ITEM, Terrain.getID("packing_shovels")));
+			FabricTagProvider<Item>.FabricTagBuilder tag = getOrCreateTagBuilder(TerrainTags.NON_DISTURBING_SHOVELS);
 
 
-			if (shouldLoosenForWood) {tag.add(Items.WOODEN_SHOVEL);}
-			if (shouldLoosenForStone) {tag.add(Items.STONE_SHOVEL);}
+			if (!shouldLoosenForWood) {tag.add(Items.WOODEN_SHOVEL);}
+			if (!shouldLoosenForStone) {tag.add(Items.STONE_SHOVEL);}
 
 			tag.add(Items.IRON_SHOVEL, Items.GOLDEN_SHOVEL, Items.DIAMOND_SHOVEL, Items.NETHERITE_SHOVEL);
 			tag.addOptional(ResourceLocation.withDefaultNamespace("copper_shovel"));

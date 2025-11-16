@@ -7,21 +7,18 @@ import net.minecraft.advancements.critereon.ItemPredicate;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.*;
 import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.core.registries.Registries;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.stats.Stats;
-import net.minecraft.tags.TagKey;
-import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.ItemUtils;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
-import net.moist.Terrain;
 import net.moist.block.ModBlocks;
 import net.moist.block.content.FallingLayer;
+import net.moist.item.TerrainTags;
 import net.moist.recipe.recipes.LooseningRecipe;
 import net.moist.recipe.ModRecipes;
 import net.moist.recipe.recipes.TransformRecipe;
@@ -33,7 +30,6 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicReference;
 
 public class ToughTerrainEvents {
-	public static final TagKey<Item> SHOVELS_THAT_PACK = TagKey.create(Registries.ITEM, Terrain.getID("packing_shovels"));
 
 
 	public static ConcurrentHashMap<Integer, BlockPos> getAdjacent(BlockPos pos) {
@@ -60,7 +56,7 @@ public class ToughTerrainEvents {
 
 	public static void subscribe() {
 		BlockEvent.BREAK.register((level, blockPos, state, player, xp) -> {
-			if (!player.isHolding(ItemPredicate.Builder.item().of(SHOVELS_THAT_PACK).build())) {getAdjacent(blockPos).forEach((key, targetPos) -> {
+			if (!player.isHolding(ItemPredicate.Builder.item().of(TerrainTags.NON_DISTURBING_SHOVELS).build())) {getAdjacent(blockPos).forEach((key, targetPos) -> {
 					if (level.getBlockState(blockPos).is(ModBlocks.LOOSENS_SURROUNDINGS)) {
 						Optional<LooseningRecipe> recipeOptional = matchLoosenRecipe(level, targetPos);
 						recipeOptional.ifPresent(recipe -> level.setBlock(targetPos, recipe.getResultState(), 11));
@@ -69,6 +65,7 @@ public class ToughTerrainEvents {
 			}
 			return EventResult.pass();
 		});
+
 
 
 

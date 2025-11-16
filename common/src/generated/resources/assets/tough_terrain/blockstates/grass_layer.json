@@ -1,28 +1,52 @@
 {
   "variants": {
-    "layers=1": {
+    "layers=1,snowy=false": {
       "model": "tough_terrain:block/grass_layer_height1"
     },
-    "layers=2": {
+    "layers=1,snowy=true": {
+      "model": "tough_terrain:block/grass_layer_snow_height1"
+    },
+    "layers=2,snowy=false": {
       "model": "tough_terrain:block/grass_layer_height2"
     },
-    "layers=3": {
+    "layers=2,snowy=true": {
+      "model": "tough_terrain:block/grass_layer_snow_height2"
+    },
+    "layers=3,snowy=false": {
       "model": "tough_terrain:block/grass_layer_height3"
     },
-    "layers=4": {
+    "layers=3,snowy=true": {
+      "model": "tough_terrain:block/grass_layer_snow_height3"
+    },
+    "layers=4,snowy=false": {
       "model": "tough_terrain:block/grass_layer_height4"
     },
-    "layers=5": {
+    "layers=4,snowy=true": {
+      "model": "tough_terrain:block/grass_layer_snow_height4"
+    },
+    "layers=5,snowy=false": {
       "model": "tough_terrain:block/grass_layer_height5"
     },
-    "layers=6": {
+    "layers=5,snowy=true": {
+      "model": "tough_terrain:block/grass_layer_snow_height5"
+    },
+    "layers=6,snowy=false": {
       "model": "tough_terrain:block/grass_layer_height6"
     },
-    "layers=7": {
+    "layers=6,snowy=true": {
+      "model": "tough_terrain:block/grass_layer_snow_height6"
+    },
+    "layers=7,snowy=false": {
       "model": "tough_terrain:block/grass_layer_height7"
     },
-    "layers=8": {
+    "layers=7,snowy=true": {
+      "model": "tough_terrain:block/grass_layer_snow_height7"
+    },
+    "layers=8,snowy=false": {
       "model": "tough_terrain:block/grass_layer_height8"
+    },
+    "layers=8,snowy=true": {
+      "model": "tough_terrain:block/grass_layer_snow_height8"
     }
   }
 }

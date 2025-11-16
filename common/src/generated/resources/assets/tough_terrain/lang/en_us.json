@@ -17,5 +17,6 @@
   "block.tough_terrain.mycelium_layer": "Mycelium Layer",
   "block.tough_terrain.mycelium_layer_block": "Mycelium Layer Block",
   "block.tough_terrain.mycelium_layer_slab": "Mycelium Layer Slab",
-  "category.tough_terrain": "Tough Terrain"
+  "category.tough_terrain": "Tough Terrain",
+  "tag.item.tough_terrain.packing_shovels": "Non-Loosening Shovels"
 }

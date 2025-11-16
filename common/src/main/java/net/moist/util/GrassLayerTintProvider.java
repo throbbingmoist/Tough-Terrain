@@ -26,7 +26,7 @@ public class GrassLayerTintProvider {
 				if (blockAndTintGetter != null || blockPos != null) {
 					color = blockAndTintGetter.getBlockTint(blockPos, BiomeColors.GRASS_COLOR_RESOLVER);
 					if (blockState.getOptionalValue(BlockStateProperties.SNOWY).orElse(false)) {
-						return 0xffffff;
+						return -1;
 					}
 					return color;
 				} else {
