@@ -34,8 +34,7 @@
           ]
         },
         "up": {
-          "texture": "#top",
-          "tintindex": 0
+          "texture": "#top"
         },
         "west": {
           "texture": "#side",
@@ -48,14 +47,14 @@
         }
       },
       "from": [
-        -0.01,
-        -0.01,
-        -0.01
+        -0.0,
+        -0.0,
+        -0.0
       ],
       "to": [
-        16.01,
+        16.0,
         4.0,
-        16.01
+        16.0
       ]
     }
   ],
@@ -64,6 +63,6 @@
     "bottom": "minecraft:block/dirt",
     "particle": "minecraft:block/dirt",
     "side": "minecraft:block/grass_block_snow",
-    "top": "minecraft:block/grass_block_top"
+    "top": "minecraft:block/snow"
   }
 }

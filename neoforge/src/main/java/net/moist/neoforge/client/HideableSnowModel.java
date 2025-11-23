@@ -1,6 +1,8 @@
 package net.moist.neoforge.client;
 
 import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.block.BlockModelShaper;
+import net.minecraft.client.renderer.block.BlockRenderDispatcher;
 import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.core.BlockPos;
@@ -11,6 +13,7 @@ import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.moist.block.content.FallingLayer;
+import net.moist.util.ForceRenderableModel;
 import net.neoforged.neoforge.client.model.BakedModelWrapper;
 import net.neoforged.neoforge.client.model.data.ModelData;
 import net.neoforged.neoforge.client.model.data.ModelProperty;
@@ -19,7 +22,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
-public class HideableSnowModel extends BakedModelWrapper<BakedModel> {
+public class HideableSnowModel extends BakedModelWrapper<BakedModel> implements ForceRenderableModel {
 	private BakedModel originalModel;
 	private boolean shouldForceRender;
 	public static final ModelProperty<Boolean> SHOULD_HIDE = new ModelProperty<>();

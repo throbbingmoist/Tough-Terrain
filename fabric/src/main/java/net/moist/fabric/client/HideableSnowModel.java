@@ -18,6 +18,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.moist.block.content.FallingLayer;
 import net.moist.block.entity.LayerBE;
 import net.moist.block.entity.TerrainBlockEntities;
+import net.moist.util.ForceRenderableModel;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -25,7 +26,7 @@ import java.util.List;
 import java.util.function.Supplier;
 
 
-public class HideableSnowModel implements BakedModel, FabricBakedModel {
+public class HideableSnowModel implements BakedModel, FabricBakedModel, ForceRenderableModel {
 	private final BakedModel bakedOriginal;
 	private boolean shouldForceRender;
 	public HideableSnowModel(BakedModel bakedOriginal) {
