@@ -34,6 +34,7 @@
           ]
         },
         "up": {
+          "cullface": "up",
           "texture": "#top"
         },
         "west": {

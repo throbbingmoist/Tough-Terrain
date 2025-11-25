@@ -5,13 +5,10 @@ import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.tags.FluidTags;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.item.FallingBlockEntity;
-import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
@@ -35,8 +32,6 @@ import net.moist.item.content.LayerItem;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import javax.swing.text.html.BlockView;
-
 import static net.moist.Terrain.getLookGranular;
 
 public class FallingLayer extends FallingBlock implements SimpleWaterloggedBlock, EntityBlock {
@@ -54,9 +49,7 @@ public class FallingLayer extends FallingBlock implements SimpleWaterloggedBlock
 	// ----------------------------
 
 	public FallingLayer(BlockBehaviour.Properties properties) {
-		super(properties.randomTicks());
-		this.overgrowable = false;
-		this.registerDefaultState(this.stateDefinition.any().setValue(LAYERS, 1).setValue(BlockStateProperties.WATERLOGGED, false));
+		this(properties, false);
 	}
 	public FallingLayer(BlockBehaviour.Properties properties, boolean overgrowable) {
 		super(properties.randomTicks());
@@ -83,8 +76,6 @@ public class FallingLayer extends FallingBlock implements SimpleWaterloggedBlock
 		if ((snowBoost == 0.0) || !(getLookGranular(Minecraft.getInstance().hitResult) >= state.getValue(FallingLayer.LAYERS)/8f)) {
 			return layerShape;
 		}
-
-
 		return Shapes.join(layerShape, snowShape, BooleanOp.OR);
 	}
 	@Override public @NotNull VoxelShape getCollisionShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
@@ -106,22 +97,13 @@ public class FallingLayer extends FallingBlock implements SimpleWaterloggedBlock
 		}
 		return Shapes.join(layerShape, snowShape, BooleanOp.OR);
 	}
+
 	@Override public boolean canBeReplaced(BlockState state, BlockPlaceContext context) {return context.getItemInHand().getItem() instanceof LayerItem && ((LayerItem) context.getItemInHand().getItem()).getBlock().equals(this) && state.getValue(LAYERS) < MAX_LAYERS;}
-	@Override protected float getShadeBrightness(BlockState blockState, BlockGetter blockGetter, BlockPos blockPos) {
-		return 1.0F;
-	}
-	public boolean overgrowable() {
-		return this.overgrowable;
-	}
-	@Override
-	protected boolean useShapeForLightOcclusion(BlockState blockState) {
-		return true;
-	}
+	public boolean overgrowable() {return this.overgrowable;}
 	@Override public BlockState getStateForPlacement(BlockPlaceContext context) {return super.getStateForPlacement(context);}
-
 	@Override public void onPlace(BlockState state, Level level, BlockPos pos, BlockState oldState, boolean isMoving) {level.scheduleTick(pos, this, 2);}
-
 	@Override public void neighborChanged(BlockState state, Level level, BlockPos pos, Block changedBlock, BlockPos changedPos, boolean isMoving) {level.scheduleTick(pos, this, 2);}
+	@Override protected boolean skipRendering(BlockState blockState, BlockState blockState2, Direction direction) {return blockState2.is(Blocks.SNOW) && direction.equals(Direction.UP);}
 
 	@Override
 	public void tick(BlockState state, ServerLevel level, BlockPos pos, RandomSource random) {
@@ -165,5 +147,4 @@ public class FallingLayer extends FallingBlock implements SimpleWaterloggedBlock
 		return new LayerBE(blockPos, blockState);
 
 	}
-	@Override public RenderShape getRenderShape(BlockState state) {return RenderShape.MODEL;}
 }

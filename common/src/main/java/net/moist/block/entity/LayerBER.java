@@ -27,48 +27,30 @@ public class LayerBER implements BlockEntityRenderer<LayerBE> {
 		Level level = blockEntity.getLevel();
 		Player player = minecraft.player;
 		if (level == null || player == null) return;
-
 		BlockState state = blockEntity.getBlockState(); BlockPos pos = blockEntity.getBlockPos(); BlockState aboveState = level.getBlockState(pos.above());
-		int snow_layers_below = Math.clamp(blockEntity.getAboveLayers(), 0, 8 - blockEntity.getLayers()); int snow_layers_above = blockEntity.getAboveLayers() - snow_layers_below;
+		if (!aboveState.is(Blocks.SNOW)) return;
 
-		if (!aboveState.is(Blocks.SNOW)) return;//if (blockEntity.getLevel().getGameTime() % 20 == 0) Terrain.LOGGER.info("lower:"+snow_layers_below+", upper:"+snow_layers_above);
-		BlockRenderDispatcher blockRenderer = minecraft.getBlockRenderer();VertexConsumer buffer = multiBufferSource.getBuffer(RenderType.solid());RandomSource random = RandomSource.create();
-
-//		BakedModel aboveModel = blockRenderer.getBlockModel(aboveState);
-//
-//		poseStack.pushPose();
-//		poseStack.translate(0f, blockEntity.getLayers()/8f,0f);
-//		blockRenderer.getModelRenderer().tesselateWithoutAO(level, aboveModel, aboveState, pos.above(), poseStack, buffer, true, random, state.getSeed(pos.above()), i);
-//		poseStack.popPose();
-
-
+		int snow_layers_below = Math.clamp(blockEntity.getAboveLayers(), 0, 8 - blockEntity.getLayers());
+		int snow_layers_above = blockEntity.getAboveLayers() - snow_layers_below;
 		float distanceMult = Math.clamp(1f - (float) Vec3.atCenterOf(blockEntity.getBlockPos()).distanceTo(player.getEyePosition()) / (256 * 16), 0f, 1f);
-//		System.out.println(distanceMult); … yeah, using a distance multiplier probably isn't best practice… but if it works, it works, and this is way less effort than messing with vanilla's rendering code.
-
 		float shift = Math.clamp((float) Vec3.atCenterOf(blockEntity.getBlockPos()).distanceTo(player.getEyePosition()) / (256 * 16), 0f, 1f);
 
-		poseStack.pushPose();
-		poseStack.scale(distanceMult, 1, distanceMult);
-		poseStack.translate(shift/2, 0f, shift/2);
+
+		BlockRenderDispatcher blockRenderer = minecraft.getBlockRenderer();VertexConsumer buffer = multiBufferSource.getBuffer(RenderType.solid());RandomSource random = RandomSource.create();
+
+
+		poseStack.pushPose();poseStack.scale(distanceMult, 1, distanceMult);poseStack.translate(shift/2, 0f, shift/2);
+
 		BlockState insideState = level.getBlockState(pos.above()).getBlock().defaultBlockState().setValue(BlockStateProperties.LAYERS, Math.min(blockEntity.getLayers() + snow_layers_below, 8));//if (blockEntity.getLevel().getGameTime() % 20 == 0) Terrain.LOGGER.info(insideState.toString());;
 		Vec3 vec3 = insideState.getOffset(level, pos.above());
 		poseStack.translate(vec3.x, vec3.y, vec3.z);
 		BakedModel insideModel = blockRenderer.getBlockModel(insideState);
-		if (blockEntity.getLayers() != 8) {
-			blockRenderer.getModelRenderer().tesselateBlock(level, insideModel, insideState, pos, poseStack, buffer, false, random, state.getSeed(pos), OverlayTexture.NO_OVERLAY);
-		}
-//		poseStack.translate(-distanceMult, -0.01f, -distanceMult);
-//		poseStack.scale(1f, 1f, 1f);
-
-
+		if (blockEntity.getLayers() != 8) blockRenderer.getModelRenderer().tesselateBlock(level, insideModel, insideState, pos, poseStack, buffer, false, random, state.getSeed(pos), OverlayTexture.NO_OVERLAY);
 		poseStack.popPose();
-
-
-		if (snow_layers_above > 0) {BlockState coverState = level.getBlockState(pos.above()).getBlock().defaultBlockState().setValue(BlockStateProperties.LAYERS, snow_layers_above);
-			poseStack.pushPose();
-			BakedModel coverModel = ((ForceRenderableModel) blockRenderer.getBlockModel(coverState)).shouldForceRender();//if (blockEntity.getLevel().getGameTime() % 20 == 0) Terrain.LOGGER.info(coverState.toString());
-			poseStack.translate(0.0f, 1.0f, 0.0f);
-			poseStack.scale(1f, 1f, 1f);
+		if (snow_layers_above > 0) {
+			poseStack.pushPose();poseStack.translate(0.0f, 1.0f, 0.0f);poseStack.scale(1f, 1f, 1f);
+			BlockState coverState = level.getBlockState(pos.above()).getBlock().defaultBlockState().setValue(BlockStateProperties.LAYERS, snow_layers_above);
+			BakedModel coverModel = ((ForceRenderableModel) blockRenderer.getBlockModel(coverState)).shouldForceRender();
 			blockRenderer.getModelRenderer().tesselateBlock(level, coverModel, coverState, pos.above(), poseStack, buffer, false, random, state.getSeed(pos.above()), OverlayTexture.NO_OVERLAY);
 			poseStack.popPose();
 		}

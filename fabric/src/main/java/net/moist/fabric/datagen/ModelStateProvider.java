@@ -148,7 +148,7 @@ public class ModelStateProvider extends FabricModelProvider {
 
 		JsonObject faceData_Bottom = new JsonObject(); faceData_Bottom.addProperty("texture", "#bottom");
 		JsonObject faceData_Side = new JsonObject(); faceData_Side.addProperty("texture", "#side"); faceData_Side.add("uv", uvs);
-		JsonObject faceData_Top = new JsonObject(); faceData_Top.addProperty("texture", "#top"); faceData_Top.addProperty("tintindex", 0);
+		JsonObject faceData_Top = new JsonObject(); faceData_Top.addProperty("texture", "#top"); ;faceData_Top.addProperty("tintindex", 0);
 		JsonObject faceData_SideOverlay = new JsonObject();
 		faceData_SideOverlay.addProperty("texture", "#overlay"); faceData_SideOverlay.addProperty("tintindex", 0);
 		faceData_SideOverlay.add("uv", uvs);
@@ -273,7 +273,7 @@ public class ModelStateProvider extends FabricModelProvider {
 
 		JsonObject faceData_Bottom = new JsonObject();faceData_Bottom.addProperty("texture", "#bottom");
 		JsonObject faceData_Side = new JsonObject();faceData_Side.addProperty("texture", "#side"); faceData_Side.add("uv", uvs);
-		JsonObject faceData_Top = new JsonObject();faceData_Top.addProperty("texture", "#top");//faceData_Top.addProperty("tintindex", 0); Don't tint. It's only snow rn.
+		JsonObject faceData_Top = new JsonObject();faceData_Top.addProperty("texture", "#top"); faceData_Top.addProperty("cullface", "up");//faceData_Top.addProperty("tintindex", 0); Don't tint. It's only snow rn.
 
 		JsonObject block_faces = new JsonObject();
 		block_faces.add("up", faceData_Top);

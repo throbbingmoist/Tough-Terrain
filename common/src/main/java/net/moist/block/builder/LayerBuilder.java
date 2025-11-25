@@ -33,7 +33,7 @@ public abstract class LayerBuilder {
 	public LayerBuilder overgrowable() {this.can_be_overgrown = true; return this;}
 	public LayerBuilder named(String name) {this.name = name; return this;}
 	public LayerBuilder withTab(RegistrySupplier<CreativeModeTab> tab) {this.tab = tab; return this;}
-	public LayerBuilder basedOn(Block block) {return this.withProperties(BlockBehaviour.Properties.ofFullCopy(block));}
+	public LayerBuilder basedOn(Block block) {return this.withProperties(BlockBehaviour.Properties.ofFullCopy(block).dynamicShape());}
 	public LayerBuilder withProperties(BlockBehaviour.Properties properties) {this.properties = properties;return this;}
 
 	public Block build() {return new Block(properties);}

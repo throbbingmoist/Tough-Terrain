@@ -41,7 +41,6 @@ public class SpreadingLayer extends SpreadingSnowyDirtBlock implements SimpleWat
 	public static final int MAX_LAYERS = 8;
 	public static final BooleanProperty SNOWY = BlockStateProperties.SNOWY;
 
-
 	public static final MapCodec<SpreadingLayer> CODEC = RecordCodecBuilder.mapCodec(instance ->
 		instance.group(
 			propertiesCodec()
@@ -62,7 +61,6 @@ public class SpreadingLayer extends SpreadingSnowyDirtBlock implements SimpleWat
 			.setValue(BlockStateProperties.SNOWY, false)
 		);
 	}
-
 	@Override public @NotNull FluidState getFluidState(BlockState state) {
 		return state.getValue(BlockStateProperties.WATERLOGGED) ? Fluids.WATER.getSource(false) : super.getFluidState(state);
 	}
@@ -70,17 +68,12 @@ public class SpreadingLayer extends SpreadingSnowyDirtBlock implements SimpleWat
 		builder.add(BlockStateProperties.WATERLOGGED).add(LAYERS);
 		builder.add(SNOWY);
 	}
-
-	@Override protected BlockState updateShape(BlockState blockState, Direction direction, BlockState blockState2, LevelAccessor levelAccessor, BlockPos blockPos, BlockPos blockPos2) {return direction == Direction.UP ? (BlockState)blockState.setValue(SNOWY, isSnowySetting(blockState2)) : super.updateShape(blockState, direction, blockState2, levelAccessor, blockPos, blockPos2);}
-	private static boolean isSnowySetting(BlockState blockState) {return blockState.is(BlockTags.SNOW);}
 //	@Override protected float getShadeBrightness(BlockState blockState, BlockGetter blockGetter, BlockPos blockPos) {
-//		return (Integer)blockState.getValue(LAYERS) == 8 ? 0.2F : 1.0F;
+//		return blockState.getValue(LAYERS) >= 8 ? 1.0F : 0.2F;
 //	}
 
-
-	@Override
-	protected boolean useShapeForLightOcclusion(BlockState blockState) {
-		return true;
+	@Override protected boolean skipRendering(BlockState blockState, BlockState blockState2, Direction direction) {
+		return blockState2.is(Blocks.SNOW) && direction.equals(Direction.UP);
 	}
 
 	@Override public @NotNull VoxelShape getShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
@@ -133,7 +126,8 @@ public class SpreadingLayer extends SpreadingSnowyDirtBlock implements SimpleWat
 			super.tick(state, level, pos, random);
 		}
 	}
-
+	@Override public boolean propagatesSkylightDown(BlockState state, BlockGetter reader, BlockPos pos) {return state.getValue(FallingLayer.LAYERS) != 8;}
+	@Override public int getLightBlock(BlockState state, BlockGetter worldIn, BlockPos pos) {return 0;}
 	@Override public boolean canSurvive(BlockState state, LevelReader level, BlockPos pos) {
 		return true;
 	}
@@ -141,7 +135,10 @@ public class SpreadingLayer extends SpreadingSnowyDirtBlock implements SimpleWat
 	@Override
 	public @Nullable BlockEntity newBlockEntity(BlockPos blockPos, BlockState blockState) {
 		return new LayerBE(blockPos, blockState);
-
 	}
-	@Override public RenderShape getRenderShape(BlockState state) {return RenderShape.MODEL;}
+
+	@Override
+	protected RenderShape getRenderShape(BlockState blockState) {
+		return RenderShape.MODEL;
+	}
 }

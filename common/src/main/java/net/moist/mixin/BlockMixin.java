@@ -30,6 +30,14 @@ public abstract class BlockMixin {
 				cir.cancel();
 			}
 		}
+		/*if (blockState.hasProperty(FallingLayer.LAYERS)) {
+			if (direction == Direction.UP) {
+				if (blockGetter.getBlockState(blockPos2).is(Blocks.SNOW)) {
+					cir.setReturnValue(false);
+					cir.cancel();
+				}
+			}
+		}*/
 	}
 	// todo: rewrite this part for a better check possibly?
 }
