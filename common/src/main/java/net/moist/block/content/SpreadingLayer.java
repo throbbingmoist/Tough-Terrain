@@ -25,6 +25,7 @@ import net.minecraft.world.level.block.state.properties.BooleanProperty;
 import net.minecraft.world.level.block.state.properties.IntegerProperty;
 import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.level.material.Fluids;
+import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.shapes.BooleanOp;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
@@ -52,8 +53,8 @@ public class SpreadingLayer extends SpreadingSnowyDirtBlock implements SimpleWat
 		return CODEC;
 	}
 
-	public SpreadingLayer(BlockBehaviour.Properties properties) {this(properties, false);}
-	public SpreadingLayer(BlockBehaviour.Properties properties, boolean overgrowable) {
+	public SpreadingLayer(Properties properties) {this(properties, false);}
+	public SpreadingLayer(Properties properties, boolean overgrowable) {
 		super(properties.randomTicks());
 		this.overgrowable = overgrowable;
 		this.registerDefaultState(this.stateDefinition.any().setValue(LAYERS, 1)
@@ -76,34 +77,35 @@ public class SpreadingLayer extends SpreadingSnowyDirtBlock implements SimpleWat
 		return blockState2.is(Blocks.SNOW) && direction.equals(Direction.UP);
 	}
 
+
 	@Override public @NotNull VoxelShape getShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
 		BlockState aboveState = level.getBlockState(pos.above());
-		double snowBoost = aboveState.is(Blocks.SNOW) ? aboveState.getValue(BlockStateProperties.LAYERS) : 0.0D;
-		double offset = state.getValue(LAYERS)*2.0D;
+		double snowBoost = aboveState.is(Blocks.SNOW) ? aboveState.getValue(BlockStateProperties.LAYERS) : 0.0D;double offset = state.getValue(LAYERS)*2.0D;
 		VoxelShape layerShape = Shapes.box(0.0D, 0.0D, 0.0D, 16.0D/16f, offset/16f, 16.0D/16f);
 		VoxelShape snowShape = Shapes.box(0.0D, offset/16f, 0.0D, 16.0D/16f, (offset+snowBoost*2.0D)/16f, 16.0D/16f);
-		if ((snowBoost == 0.0) || !(getLookGranular(Minecraft.getInstance().hitResult) >= state.getValue(FallingLayer.LAYERS)/8f)) {
-			return layerShape;
-		}
+		if ((snowBoost == 0.0) || !(getLookGranular(Minecraft.getInstance().hitResult) >= state.getValue(FallingLayer.LAYERS)/8f - 0.0005f) || (Minecraft.getInstance().player != null && Minecraft.getInstance().player.isCrouching())) {return layerShape;}
 		return Shapes.join(layerShape, snowShape, BooleanOp.OR);
 	}
 	@Override public @NotNull VoxelShape getCollisionShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
 		BlockState aboveState = level.getBlockState(pos.above());
-		double snowBoost = aboveState.is(Blocks.SNOW) ? aboveState.getValue(BlockStateProperties.LAYERS)-1 : 0.0D;
-		double offset = state.getValue(LAYERS)*2.0D;
+		double snowBoost = aboveState.is(Blocks.SNOW) ? (aboveState.getValue(BlockStateProperties.LAYERS))-1 : 0.0D;double offset = state.getValue(LAYERS)*2.0D;
+		VoxelShape layerShape = Shapes.box(0.0D, 0.0D, 0.0D, 16.0D/16f, offset/16f, 16.0D/16f);
+		VoxelShape snowShape = Shapes.box(0.0D, offset/16f, 0.0D, 16.0D/16f, (offset+snowBoost*2.0D)/16f, 16.0D/16f);
+		return layerShape;
+	}
+	@Override public @NotNull VoxelShape getInteractionShape(BlockState state, BlockGetter level, BlockPos pos) {
+		BlockState aboveState = level.getBlockState(pos.above());
+		double snowBoost = aboveState.is(Blocks.SNOW) ? (aboveState.getValue(BlockStateProperties.LAYERS))-1 : 0.0D;double offset = state.getValue(LAYERS)*2.0D;
 		VoxelShape layerShape = Shapes.box(0.0D, 0.0D, 0.0D, 16.0D/16f, offset/16f, 16.0D/16f);
 		VoxelShape snowShape = Shapes.box(0.0D, offset/16f, 0.0D, 16.0D/16f, (offset+snowBoost*2.0D)/16f, 16.0D/16f);
 		return layerShape;
 	}
 	@Override public @NotNull VoxelShape getVisualShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
 		BlockState aboveState = level.getBlockState(pos.above());
-		double snowBoost = aboveState.is(Blocks.SNOW) ? aboveState.getValue(BlockStateProperties.LAYERS) : 0.0D;
-		double offset = state.getValue(LAYERS)*2.0D;
+		double snowBoost = aboveState.is(Blocks.SNOW) ? aboveState.getValue(BlockStateProperties.LAYERS) : 0.0D;double offset = state.getValue(LAYERS)*2.0D;
 		VoxelShape layerShape = Shapes.box(0.0D, 0.0D, 0.0D, 16.0D/16f, offset/16f, 16.0D/16f);
 		VoxelShape snowShape = Shapes.box(0.0D, offset/16f, 0.0D, 16.0D/16f, (offset+snowBoost*2.0D)/16f, 16.0D/16f);
-		if ((snowBoost == 0.0) || !(getLookGranular(Minecraft.getInstance().hitResult) >= state.getValue(FallingLayer.LAYERS)/8f)) {
-			return layerShape;
-		}
+		if ((snowBoost == 0.0) || !(getLookGranular(Minecraft.getInstance().hitResult) >= state.getValue(FallingLayer.LAYERS)/8f)) {return layerShape;}
 		return Shapes.join(layerShape, snowShape, BooleanOp.OR);
 	}
 

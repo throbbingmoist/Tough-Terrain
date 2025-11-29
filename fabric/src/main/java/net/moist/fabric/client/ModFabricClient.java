@@ -23,7 +23,7 @@ public final class ModFabricClient implements ClientModInitializer {
 
 	@Override
 	public void onInitializeClient() {
-//		BlockRenderLayerMap.INSTANCE.putBlocks(RenderType.cutout(), ModBlocks.GRASS_LAYER.getPlacedLayer(), ModBlocks.MYCELIUM_LAYER.getPlacedLayer());
+		BlockRenderLayerMap.INSTANCE.putBlocks(RenderType.cutout(), ModBlocks.GRASS_LAYER.getPlacedLayer(), ModBlocks.MYCELIUM_LAYER.getPlacedLayer());
 
 		BlockEntityRendererRegistry.register(TerrainBlockEntities.LAYER_BE.get(), context -> new LayerBER());
 		ModelLoadingPlugin.register(pluginContext -> {
