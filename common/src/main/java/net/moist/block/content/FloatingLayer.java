@@ -1,21 +1,17 @@
 package net.moist.block.content;
 
-import com.mojang.serialization.MapCodec;
-import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.tags.BlockTags;
 import net.minecraft.util.RandomSource;
-import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.LevelReader;
-import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.Blocks;
-import net.minecraft.world.level.block.SimpleWaterloggedBlock;
-import net.minecraft.world.level.block.SpreadingSnowyDirtBlock;
+import net.minecraft.world.level.block.*;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
@@ -28,32 +24,19 @@ import net.minecraft.world.phys.shapes.BooleanOp;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
+import net.moist.block.entity.LayerBE;
 import net.moist.item.content.LayerItem;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import static net.moist.Terrain.getLookGranular;
 
-public class FloatingLayer extends Block implements SimpleWaterloggedBlock {
+public class FloatingLayer extends Block implements SimpleWaterloggedBlock, EntityBlock {
 	public static final IntegerProperty LAYERS = FallingLayer.LAYERS;
 	public static final int MAX_LAYERS = 8;
 	public static final BooleanProperty SNOWY = BlockStateProperties.SNOWY;
 
 	private final boolean overgrowable;
-
-
-	protected static final VoxelShape[] SHAPE_BY_LAYER = new VoxelShape[]{
-		Shapes.empty(),
-		Block.box(0.0D, 0.0D, 0.0D, 16.0D, 2.0D, 16.0D),
-		Block.box(0.0D, 0.0D, 0.0D, 16.0D, 4.0D, 16.0D),
-		Block.box(0.0D, 0.0D, 0.0D, 16.0D, 6.0D, 16.0D),
-		Block.box(0.0D, 0.0D, 0.0D, 16.0D, 8.0D, 16.0D),
-		Block.box(0.0D, 0.0D, 0.0D, 16.0D, 10.0D, 16.0D),
-		Block.box(0.0D, 0.0D, 0.0D, 16.0D, 12.0D, 16.0D),
-		Block.box(0.0D, 0.0D, 0.0D, 16.0D, 14.0D, 16.0D),
-		Block.box(0.0D, 0.0D, 0.0D, 16.0D, 16.0D, 16.0D)
-	};
-
 
 	public FloatingLayer(Properties properties) {
 		this(properties, false);
@@ -75,41 +58,40 @@ public class FloatingLayer extends Block implements SimpleWaterloggedBlock {
 		builder.add(SNOWY);
 	}
 
+	@Override protected boolean skipRendering(BlockState blockState, BlockState blockState2, Direction direction) {
+		return blockState2.is(Blocks.SNOW) && direction.equals(Direction.UP);
+	}
+
 	@Override public @NotNull VoxelShape getShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
 		BlockState aboveState = level.getBlockState(pos.above());
-		double snowBoost = aboveState.is(Blocks.SNOW) ? aboveState.getValue(BlockStateProperties.LAYERS) : 0.0D;
-		double offset = state.getValue(LAYERS)*2.0D;
+		double snowBoost = aboveState.is(Blocks.SNOW) ? aboveState.getValue(BlockStateProperties.LAYERS) : 0.0D;double offset = state.getValue(LAYERS)*2.0D;
 		VoxelShape layerShape = Shapes.box(0.0D, 0.0D, 0.0D, 16.0D/16f, offset/16f, 16.0D/16f);
 		VoxelShape snowShape = Shapes.box(0.0D, offset/16f, 0.0D, 16.0D/16f, (offset+snowBoost*2.0D)/16f, 16.0D/16f);
-		if ((snowBoost == 0.0) || !(getLookGranular(Minecraft.getInstance().hitResult) >= state.getValue(FallingLayer.LAYERS)/8f)) {
-			return layerShape;
-		}
+		if ((snowBoost == 0.0) || !(getLookGranular(Minecraft.getInstance().hitResult) >= state.getValue(FallingLayer.LAYERS)/8f - 0.0005f) || (Minecraft.getInstance().player != null && Minecraft.getInstance().player.isCrouching())) {return layerShape;}
 		return Shapes.join(layerShape, snowShape, BooleanOp.OR);
 	}
 	@Override public @NotNull VoxelShape getCollisionShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
 		BlockState aboveState = level.getBlockState(pos.above());
-		double snowBoost = aboveState.is(Blocks.SNOW) ? aboveState.getValue(BlockStateProperties.LAYERS)-1 : 0.0D;
-		double offset = state.getValue(LAYERS)*2.0D;
+		double snowBoost = aboveState.is(Blocks.SNOW) ? (aboveState.getValue(BlockStateProperties.LAYERS))-1 : 0.0D;double offset = state.getValue(LAYERS)*2.0D;
 		VoxelShape layerShape = Shapes.box(0.0D, 0.0D, 0.0D, 16.0D/16f, offset/16f, 16.0D/16f);
 		VoxelShape snowShape = Shapes.box(0.0D, offset/16f, 0.0D, 16.0D/16f, (offset+snowBoost*2.0D)/16f, 16.0D/16f);
 		return layerShape;
 	}
 	@Override public @NotNull VoxelShape getVisualShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
 		BlockState aboveState = level.getBlockState(pos.above());
-		double snowBoost = aboveState.is(Blocks.SNOW) ? aboveState.getValue(BlockStateProperties.LAYERS) : 0.0D;
-		double offset = state.getValue(LAYERS)*2.0D;
+		double snowBoost = aboveState.is(Blocks.SNOW) ? aboveState.getValue(BlockStateProperties.LAYERS) : 0.0D;double offset = state.getValue(LAYERS)*2.0D;
 		VoxelShape layerShape = Shapes.box(0.0D, 0.0D, 0.0D, 16.0D/16f, offset/16f, 16.0D/16f);
 		VoxelShape snowShape = Shapes.box(0.0D, offset/16f, 0.0D, 16.0D/16f, (offset+snowBoost*2.0D)/16f, 16.0D/16f);
-		if ((snowBoost == 0.0) || !(getLookGranular(Minecraft.getInstance().hitResult) >= state.getValue(FallingLayer.LAYERS)/8f)) {
-			return layerShape;
-		}
+		if ((snowBoost == 0.0) || !(getLookGranular(Minecraft.getInstance().hitResult) >= state.getValue(FallingLayer.LAYERS)/8f)) {return layerShape;}
 		return Shapes.join(layerShape, snowShape, BooleanOp.OR);
 	}
 	@Override public boolean canBeReplaced(BlockState state, BlockPlaceContext context) {
 		return context.getItemInHand().getItem() instanceof LayerItem && ((LayerItem) context.getItemInHand().getItem()).getBlock().equals(this) && state.getValue(LAYERS) < MAX_LAYERS;
 	}
 
-	@Override public BlockState getStateForPlacement(BlockPlaceContext context) {return super.getStateForPlacement(context);}
+	@Override public BlockState getStateForPlacement(BlockPlaceContext context) {
+		return super.getStateForPlacement(context);
+	}
 
 	@Override public void onPlace(BlockState state, Level level, BlockPos pos, BlockState oldState, boolean isMoving) {
 		level.scheduleTick(pos, this, 2);
@@ -126,6 +108,16 @@ public class FloatingLayer extends Block implements SimpleWaterloggedBlock {
 			state.setValue(BlockStateProperties.WATERLOGGED, false);}
 			super.tick(state, level, pos, random);
 		}}
-
+	@Override public boolean propagatesSkylightDown(BlockState state, BlockGetter reader, BlockPos pos) {return state.getValue(FallingLayer.LAYERS) != 8;}
+	@Override public int getLightBlock(BlockState state, BlockGetter worldIn, BlockPos pos) {return 0;}
 	@Override public boolean canSurvive(BlockState state, LevelReader level, BlockPos pos) {return true;}
+
+	@Override
+	public @Nullable BlockEntity newBlockEntity(BlockPos blockPos, BlockState blockState) {
+		return new LayerBE(blockPos, blockState);
+	}
+	@Override
+	protected RenderShape getRenderShape(BlockState blockState) {
+		return RenderShape.MODEL;
+	}
 }

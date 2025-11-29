@@ -8,24 +8,36 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.phys.shapes.VoxelShape;
+import net.moist.Terrain;
 import net.moist.block.content.FallingLayer;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(Block.class)
 public abstract class BlockMixin {
+	@Shadow
+	private BlockState defaultBlockState;
+
 	@Inject(method = "shouldRenderFace", at = @At(value = "HEAD"), cancellable = true)
 	private static void tough_terrain$shouldRenderFace(BlockState blockState, BlockGetter blockGetter, BlockPos blockPos, Direction direction, BlockPos blockPos2, CallbackInfoReturnable<Boolean> cir) {
 		if (blockState.is(Blocks.SNOW)) {
 			BlockState stateBelowSnow = blockGetter.getBlockState(blockPos.below());
 			if (stateBelowSnow.hasProperty(FallingLayer.LAYERS)) {
-//				todo: introduce specific logic for detection
 				cir.setReturnValue(true);
 				cir.cancel();
 			}
 		}
+		/*if (blockState.hasProperty(FallingLayer.LAYERS)) {
+			if (direction == Direction.UP) {
+				if (blockGetter.getBlockState(blockPos2).is(Blocks.SNOW)) {
+					cir.setReturnValue(false);
+					cir.cancel();
+				}
+			}
+		}*/
 	}
-	// OLD ATTEMPT ↑
+	// todo: rewrite this part for a better check possibly?
 }

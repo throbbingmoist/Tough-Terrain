@@ -1,8 +1,8 @@
-package net.moist.util;
+package net.moist.block.record;
 
 import net.minecraft.world.level.block.Blocks;
 
-public final class ConcretePowderHelpers {
+public final class ConcreteHelpers {
 	public static final ConcreteHelper BLACK = new ConcreteHelper(Blocks.BLACK_CONCRETE_POWDER, Blocks.BLACK_CONCRETE);
 	public static final ConcreteHelper GRAY = new ConcreteHelper(Blocks.GRAY_CONCRETE_POWDER, Blocks.GRAY_CONCRETE);
 	public static final ConcreteHelper LIGHT_GRAY = new ConcreteHelper(Blocks.LIGHT_GRAY_CONCRETE_POWDER, Blocks.LIGHT_GRAY_CONCRETE);

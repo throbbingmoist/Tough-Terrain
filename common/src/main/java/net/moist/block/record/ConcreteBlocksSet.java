@@ -1,21 +1,16 @@
-package net.moist.util.record;
+package net.moist.block.record;
 
 import dev.architectury.registry.client.rendering.ColorHandlerRegistry;
 import dev.architectury.registry.registries.RegistrySupplier;
-import net.minecraft.client.color.block.BlockColor;
-import net.minecraft.client.color.item.ItemColor;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.CreativeModeTabs;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
 import net.moist.Terrain;
-import net.moist.block.ModBlocks;
-import net.moist.block.builder.LayerBuilder;
 import net.moist.item.ModItems;
 import net.moist.item.content.LayerItem;
 import net.moist.util.ColorHandler;
-import net.moist.util.ConcreteHelper;
 import org.jetbrains.annotations.Nullable;
 
 public record ConcreteBlocksSet(

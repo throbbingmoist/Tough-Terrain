@@ -11,9 +11,11 @@ import net.minecraft.data.models.model.*;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.moist.Terrain;
 import net.moist.block.ModBlocks;
 import net.moist.block.content.FallingLayer;
+import net.moist.block.content.FloatingLayer;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -57,8 +59,9 @@ public class ModelStateProvider extends FabricModelProvider {
 		ModelTemplates.SLAB_BOTTOM.create(Terrain.getID("block/"+blockName+"_slab"), getGrassLikeTextureMapping(primaryBlock, secondaryBlock), blockModelGenerators.modelOutput);
 		for (int i = 1; i <= 8; ++i) {
 			generateGrassLayerModel(blockModelGenerators, primaryBlock, secondaryBlock, blockName, i);
+			generateSnowyGrassLikeLayerModel(blockModelGenerators, primaryBlock, secondaryBlock, Blocks.SNOW, blockName+"_snow", i);
 		}
-		generateLayeredBlockstates(blockModelGenerators, layeredBlock, blockName);
+		generateGrassLayeredBlockstates(blockModelGenerators, layeredBlock, blockName);
 		generateNonSpriteLayerItemModels(blockModelGenerators, blockName);
 	}
 	public void generateGrassLikeLayers(BlockModelGenerators blockModelGenerators, Block layeredBlock, Block primaryBlock, Block secondaryBlock, @Nullable String genericItemName) {
@@ -81,11 +84,6 @@ public class ModelStateProvider extends FabricModelProvider {
 			.put(TextureSlot.SIDE, secondaryID.withPrefix("block/").withSuffix("_side"))
 			.put(TextureSlot.BOTTOM, primaryID.withPrefix("block/").withSuffix("_block"))
 			.put(TextureSlot.DOWN, primaryID.withPrefix("block/").withSuffix("_block"))
-
-//			.put(TextureSlot.NORTH, secondaryID.withSuffix("_side"))
-//			.put(TextureSlot.EAST, secondaryID.withSuffix("_side"))
-//			.put(TextureSlot.SOUTH, secondaryID.withSuffix("_side"))
-//			.put(TextureSlot.WEST, secondaryID.withSuffix("_side"))
 			;
 	}
 
@@ -103,17 +101,9 @@ public class ModelStateProvider extends FabricModelProvider {
 		JsonArray elements = new JsonArray();
 		JsonObject element = new JsonObject();
 
-		JsonArray fromArray = new JsonArray();
-		fromArray.add(0);
-		fromArray.add(0);
-		fromArray.add(0);
-		element.add("from", fromArray);
+		JsonArray fromArray = new JsonArray();   fromArray.add(-0.0f); fromArray.add(-0.0f); fromArray.add(-0.0f);element.add("from", fromArray);
+		JsonArray toArray = new JsonArray();     toArray.add(16.0f); toArray.add(level*2f); toArray.add(16.0f);element.add("to", toArray);
 
-		JsonArray toArray = new JsonArray();
-		toArray.add(16);
-		toArray.add(level*2);
-		toArray.add(16);
-		element.add("to", toArray);
 
 		JsonObject faces = new JsonObject();
 
@@ -149,8 +139,8 @@ public class ModelStateProvider extends FabricModelProvider {
 		JsonArray elements = new JsonArray();
 		JsonObject block = new JsonObject();
 
-		JsonArray fromArray = new JsonArray();   fromArray.add(0); fromArray.add(0); fromArray.add(0);   block.add("from", fromArray);
-		JsonArray toArray = new JsonArray();     toArray.add(16); toArray.add(level*2); toArray.add(16);   block.add("to", toArray);
+		JsonArray fromArray = new JsonArray();   fromArray.add(-0.0f); fromArray.add(-0.0f); fromArray.add(- 0.0f);   block.add("from", fromArray);
+		JsonArray toArray = new JsonArray();     toArray.add(16.0f); toArray.add(level*2f); toArray.add(16.0f);   block.add("to", toArray);
 
 		JsonArray uvs = new JsonArray();
 		uvs.add(0);uvs.add(0);
@@ -158,7 +148,7 @@ public class ModelStateProvider extends FabricModelProvider {
 
 		JsonObject faceData_Bottom = new JsonObject(); faceData_Bottom.addProperty("texture", "#bottom");
 		JsonObject faceData_Side = new JsonObject(); faceData_Side.addProperty("texture", "#side"); faceData_Side.add("uv", uvs);
-		JsonObject faceData_Top = new JsonObject(); faceData_Top.addProperty("texture", "#top"); faceData_Top.addProperty("tintindex", 0);
+		JsonObject faceData_Top = new JsonObject(); faceData_Top.addProperty("texture", "#top"); ;faceData_Top.addProperty("tintindex", 0);
 		JsonObject faceData_SideOverlay = new JsonObject();
 		faceData_SideOverlay.addProperty("texture", "#overlay"); faceData_SideOverlay.addProperty("tintindex", 0);
 		faceData_SideOverlay.add("uv", uvs);
@@ -230,8 +220,8 @@ public class ModelStateProvider extends FabricModelProvider {
 
 		JsonObject block = new JsonObject();
 
-		JsonArray fromArray = new JsonArray();   fromArray.add(0); fromArray.add(0); fromArray.add(0);   block.add("from", fromArray);
-		JsonArray toArray = new JsonArray();     toArray.add(16); toArray.add(level*2); toArray.add(16);   block.add("to", toArray);
+		JsonArray fromArray = new JsonArray();   fromArray.add(-0.0f); fromArray.add(-0.0f); fromArray.add(- 0.0f);   block.add("from", fromArray);
+		JsonArray toArray = new JsonArray();     toArray.add(16.0f); toArray.add(level*2f); toArray.add(16.0f);   block.add("to", toArray);
 
 		JsonArray uvs = new JsonArray();
 		uvs.add(0);uvs.add(0);
@@ -257,11 +247,64 @@ public class ModelStateProvider extends FabricModelProvider {
 		blockModelGenerators.modelOutput.accept(generatedModel, () -> model);
 	}
 
+	private static void generateSnowyGrassLikeLayerModel(BlockModelGenerators blockModelGenerators, Block baseTextureBlock, Block mainTextureBlock, Block topTextureBlock, String blockName, int level) {
+		ResourceLocation generatedModel = ResourceLocation.fromNamespaceAndPath(Terrain.MOD_ID, "block/" + blockName + "_height" + level);
+
+		JsonObject model = new JsonObject();
+
+		JsonObject textures = new JsonObject();
+		textures.addProperty("particle", TextureMapping.getBlockTexture(baseTextureBlock).toString());
+		textures.addProperty("bottom", TextureMapping.getBlockTexture(baseTextureBlock).toString());
+		textures.addProperty("side", TextureMapping.getBlockTexture(mainTextureBlock, "_snow").toString());
+		textures.addProperty("top", TextureMapping.getBlockTexture(topTextureBlock).toString());
+
+		model.add("textures", textures);
+		model.addProperty("render_type", "minecraft:cutout");
+		JsonArray elements = new JsonArray();
+
+		JsonObject block = new JsonObject();
+
+		JsonArray fromArray = new JsonArray();   fromArray.add(-0.0f); fromArray.add(-0.0f); fromArray.add(-0.0f);   block.add("from", fromArray);
+		JsonArray toArray = new JsonArray();     toArray.add(16.0f); toArray.add(level*2f); toArray.add(16.0f);   block.add("to", toArray);
+
+		JsonArray uvs = new JsonArray();
+		uvs.add(0);uvs.add(0);
+		uvs.add(16);uvs.add(level*2);
+
+		JsonObject faceData_Bottom = new JsonObject();faceData_Bottom.addProperty("texture", "#bottom");
+		JsonObject faceData_Side = new JsonObject();faceData_Side.addProperty("texture", "#side"); faceData_Side.add("uv", uvs);
+		JsonObject faceData_Top = new JsonObject();faceData_Top.addProperty("texture", "#top"); faceData_Top.addProperty("cullface", "up");//faceData_Top.addProperty("tintindex", 0); Don't tint. It's only snow rn.
+
+		JsonObject block_faces = new JsonObject();
+		block_faces.add("up", faceData_Top);
+		block_faces.add("down", faceData_Bottom);
+		block_faces.add("north", faceData_Side);
+		block_faces.add("south", faceData_Side);
+		block_faces.add("east", faceData_Side);
+		block_faces.add("west", faceData_Side);
+		block.add("faces", block_faces);
+		elements.add(block);
+
+		model.add("elements", elements);
+		if (level == 1) {model.addProperty("parent", "block/thin_block");} else {model.addProperty("parent", "block/block");}
+
+		blockModelGenerators.modelOutput.accept(generatedModel, () -> model);
+	}
+
 	private static void generateLayeredBlockstates(BlockModelGenerators blockModelGenerators, Block layeredBlock, String blockName) {
 		blockModelGenerators.blockStateOutput.accept( MultiVariantGenerator.multiVariant(layeredBlock).with(PropertyDispatch.property(FallingLayer.LAYERS).generate((integer) -> {
 			ResourceLocation modelLocation;
 			if (integer > 8) {modelLocation = ResourceLocation.fromNamespaceAndPath(Terrain.MOD_ID, "block/" + blockName);}
 			else {modelLocation = ResourceLocation.fromNamespaceAndPath(Terrain.MOD_ID, "block/" + blockName + "_height" + integer);}
+			return Variant.variant().with(VariantProperties.MODEL, modelLocation);
+		})));
+	}
+	private static void generateGrassLayeredBlockstates(BlockModelGenerators blockModelGenerators, Block layeredBlock, String blockName) {
+		blockModelGenerators.blockStateOutput.accept( MultiVariantGenerator.multiVariant(layeredBlock).with(PropertyDispatch.properties(FallingLayer.LAYERS, BlockStateProperties.SNOWY).generate((integer, bool) -> {
+			ResourceLocation modelLocation;
+			String SnowSuffix = bool ? "_snow" : "";
+			if (integer > 8) {modelLocation = ResourceLocation.fromNamespaceAndPath(Terrain.MOD_ID, "block/" + blockName+SnowSuffix);}
+			else {modelLocation = ResourceLocation.fromNamespaceAndPath(Terrain.MOD_ID, "block/" +blockName+SnowSuffix+ "_height" + integer);}
 			return Variant.variant().with(VariantProperties.MODEL, modelLocation);
 		})));
 	}

@@ -49,4 +49,14 @@ public abstract class MinecraftMixin {
 			}}
 		return value;
 	}
+//	@ModifyVariable(method = "pickBlock", at= @At(value = "INVOKE_ASSIGN", target = "Lnet/minecraft/world/phys/BlockHitResult;getBlockPos()Lnet/minecraft/core/BlockPos;"))
+//	public BlockPos tough_terrain$pickBlock(BlockPos value) {
+//		if (this.player != null && this.level != null) {
+//			BlockState stateHere = this.level.getBlockState(value);
+//			BlockState stateAbove = this.level.getBlockState(value.above());
+//			if (stateHere.hasProperty(FallingLayer.LAYERS) && stateAbove.is(Blocks.SNOW)) {
+//				if (stateHere.getValue(FallingLayer.LAYERS) < 8 && (getLookGranular(this.hitResult) >= stateHere.getOptionalValue(FallingLayer.LAYERS).orElse(0)/8f)) {return value.above();}
+//			}}
+//		return value;
+//	}
 }
